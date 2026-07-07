@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,6 +118,16 @@ public class TaskService {
         log.warn("Task with id: {} not found", id);
         return null;
     }
+
+    public List<TaskDTO> getTasksLowerThanDate(LocalDateTime date)
+    {
+        log.info("Getting tasks lower than date: {}", date);
+       return tasks.stream()
+               .filter(t -> t.getDueDate().isBefore(date)).collect(java.util.stream.Collectors.toList());
+
+    }
+
+
 
 
 

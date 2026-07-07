@@ -1,8 +1,10 @@
 package com.example.tasks.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.service.TaskService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,6 +24,13 @@ public class TaskController {
     public TaskDTO getTaskById(@PathVariable Long id)
     {
         return taskService.getTaskById(id);
+    }
+
+    @GetMapping("/before")
+    public List<TaskDTO> getTasksBeforeDate(@RequestParam
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date)
+    {
+      return taskService.getTasksLowerThanDate(date);
     }
 
     @PostMapping
@@ -54,11 +63,17 @@ public class TaskController {
         return taskService.updateTask(id, task);
     }
 
+
+
+
     @PutMapping("/{id}/status")
     public TaskDTO updateTaskStatus(@PathVariable Long id, @RequestBody String status)
     {
         return taskService.updateTaskStatus(id, status);
     }
+
+
+
 
 
 
