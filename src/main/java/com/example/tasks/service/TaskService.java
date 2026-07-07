@@ -127,6 +127,42 @@ public class TaskService {
 
     }
 
+    public List<TaskDTO> getTasksHigherThanDate(LocalDateTime date)
+    {
+
+       return tasks.stream()
+               .filter(t -> t.getDueDate().isAfter(date)).collect(java.util.stream.Collectors.toList());
+    }
+
+    public List<TaskDTO> getTasksBetweenDates(LocalDateTime start, LocalDateTime end)
+    {
+        return tasks.stream()
+                .filter(t -> t.getDueDate().isAfter(start) && t.getDueDate().isBefore(end)).collect(java.util.stream.Collectors.toList());
+    }
+
+    public TaskDTO updateTaskContent(Long id, String content) {
+        for (TaskDTO task : tasks) {
+            if (task.getId() == id) {
+                task.setContent(content);
+                return task;
+            }
+        }
+        log.warn("Task with id: {} not found", id);
+        return null;
+    }
+
+    public List<TaskDTO> removeRandomTask()
+    {
+
+        int randomIndex = (int) (Math.random() * tasks.size());
+        TaskDTO removedTask = tasks.remove(randomIndex);
+        log.info("Removed task: {}", removedTask);
+        return tasks;
+
+    }
+
+
+
 
 
 

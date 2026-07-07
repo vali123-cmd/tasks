@@ -33,6 +33,23 @@ public class TaskController {
       return taskService.getTasksLowerThanDate(date);
     }
 
+    @GetMapping("/after")
+    public List<TaskDTO> getTasksAfterDate(@RequestParam
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date)
+    {
+        return taskService.getTasksHigherThanDate(date);
+    }
+
+    @GetMapping("/between")
+    public List<TaskDTO> getTasksBetweenDates(@RequestParam
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
+                                                @RequestParam
+                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
+                                                )
+    {
+        return taskService.getTasksBetweenDates(start, end);
+    }
+
     @PostMapping
     public List<TaskDTO> addTask(@RequestBody TaskDTO task)
     {
@@ -57,6 +74,12 @@ public class TaskController {
         taskService.deleteAllTasks();
     }
 
+    @DeleteMapping("/random")
+    public void deleteRandomTask()
+    {
+        taskService.removeRandomTask();
+    }
+
     @PutMapping("/{id}")
     public TaskDTO updateTask(@PathVariable Long id, @RequestBody TaskDTO task)
     {
@@ -72,7 +95,11 @@ public class TaskController {
         return taskService.updateTaskStatus(id, status);
     }
 
-
+    @PutMapping("/{id}/content")
+    public TaskDTO updateTaskContent(@PathVariable Long id, @RequestBody String content)
+    {
+        return taskService.updateTaskContent(id, content);
+    }
 
 
 
