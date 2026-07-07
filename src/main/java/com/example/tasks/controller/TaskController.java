@@ -54,6 +54,12 @@ public class TaskController {
         return taskService.updateTask(id, task);
     }
 
+    @PutMapping("/{id}/status")
+    public TaskDTO updateTaskStatus(@PathVariable Long id, @RequestBody String status)
+    {
+        return taskService.updateTaskStatus(id, status);
+    }
+
 
 
 }

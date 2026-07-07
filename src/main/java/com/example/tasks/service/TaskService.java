@@ -4,6 +4,7 @@ package com.example.tasks.service;
 import com.example.tasks.dto.TaskDTO;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -104,6 +105,17 @@ public class TaskService {
     {
         log.info("Deleting all tasks");
         tasks.clear();
+    }
+
+    public TaskDTO updateTaskStatus(Long id, String status) {
+        for (TaskDTO task : tasks) {
+            if (task.getId() == id) {
+                task.setStatus(status);
+                return task;
+            }
+        }
+        log.warn("Task with id: {} not found", id);
+        return null;
     }
 
 
