@@ -4,11 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.service.TaskService;
+import jakarta.validation.Valid;
+
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tasks")
+@Validated
 public class TaskController {
     private final TaskService taskService;
     public TaskController(TaskService taskService) {
@@ -20,8 +25,8 @@ public class TaskController {
         return taskService.getTasks();
     }
 
-    @GetMapping("/id")
-    public TaskDTO getTaskById(@PathVariable Long id)
+    @GetMapping("/{id}")
+    public TaskDTO getTaskById(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id)
     {
         return taskService.getTaskById(id);
     }
@@ -51,19 +56,19 @@ public class TaskController {
     }
 
     @PostMapping
-    public List<TaskDTO> addTask(@RequestBody TaskDTO task)
+    public List<TaskDTO> addTask(@Valid @RequestBody TaskDTO task)
     {
         return taskService.addTask(task);
 
     }
 
     @PostMapping("/add-tasks")
-    public List<TaskDTO> addTasks(@RequestBody List<TaskDTO> tasks){
+    public List<TaskDTO> addTasks( @Valid @RequestBody List<@Valid TaskDTO> tasks){
         return taskService.addTasks(tasks);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id)
+    public void deleteTask(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id)
     {
         taskService.deleteTask(id);
     }
@@ -81,7 +86,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public TaskDTO updateTask(@PathVariable Long id, @RequestBody TaskDTO task)
+    public TaskDTO updateTask(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @Valid @RequestBody TaskDTO task)
     {
         return taskService.updateTask(id, task);
     }
@@ -90,13 +95,13 @@ public class TaskController {
 
 
     @PutMapping("/{id}/status")
-    public TaskDTO updateTaskStatus(@PathVariable Long id, @RequestBody String status)
+    public TaskDTO updateTaskStatus(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @RequestBody String status)
     {
         return taskService.updateTaskStatus(id, status);
     }
 
     @PutMapping("/{id}/content")
-    public TaskDTO updateTaskContent(@PathVariable Long id, @RequestBody String content)
+    public TaskDTO updateTaskContent(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @RequestBody String content)
     {
         return taskService.updateTaskContent(id, content);
     }
