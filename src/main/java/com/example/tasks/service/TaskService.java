@@ -93,10 +93,20 @@ public class TaskService {
 
     }
 
+    public List<TaskDTO> addTasks(List<TaskDTO> tasks)
+    {
+        log.info("Adding tasks: {}", tasks);
+        this.tasks.addAll(tasks);
+        return this.tasks;
+    }
+
     public void deleteAllTasks()
     {
+        log.info("Deleting all tasks");
         tasks.clear();
     }
+
+
 
 
 }

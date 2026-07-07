@@ -31,6 +31,11 @@ public class TaskController {
 
     }
 
+    @PostMapping("/add-tasks")
+    public List<TaskDTO> addTasks(@RequestBody List<TaskDTO> tasks){
+        return taskService.addTasks(tasks);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteTask(@PathVariable Long id)
     {
