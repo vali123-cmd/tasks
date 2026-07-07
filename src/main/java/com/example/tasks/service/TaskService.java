@@ -93,5 +93,10 @@ public class TaskService {
 
     }
 
+    public void deleteAllTasks()
+    {
+        tasks.clear();
+    }
+
 
 }

@@ -37,6 +37,12 @@ public class TaskController {
         taskService.deleteTask(id);
     }
 
+    @DeleteMapping
+    public void deleteAllTasks()
+    {
+        taskService.deleteAllTasks();
+    }
+
     @PutMapping("/{id}")
     public TaskDTO updateTask(@PathVariable Long id, @RequestBody TaskDTO task)
     {
