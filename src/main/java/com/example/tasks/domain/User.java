@@ -31,7 +31,8 @@ public class User {
     private boolean isInternal;
 
     @Column(name = "CREATION_DATE")
-    private LocalDateTime creationDate;
+    @Builder.Default
+    private LocalDateTime creationDate = LocalDateTime.now();
 
     @Column(name = "CREATED_BY")
     private String createdBy;
