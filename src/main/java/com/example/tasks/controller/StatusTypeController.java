@@ -31,6 +31,7 @@ public class StatusTypeController {
 
     @PostMapping
     public StatusTypeDTO createStatus(@Valid @RequestBody StatusTypeDTO statusTypeDTO){
+
         return statusTypeService.createStatus(statusTypeDTO);
     }
 
