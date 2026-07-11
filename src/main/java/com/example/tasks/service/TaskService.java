@@ -12,9 +12,6 @@ import java.util.List;
 
 @Service
 @Slf4j
-@Builder
-
-
 
 public class TaskService {
     private List<TaskDTO> tasks = new ArrayList<>();
