@@ -2,10 +2,13 @@ package com.example.tasks.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.example.tasks.domain.Task;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.service.TaskService;
 import jakarta.validation.Valid;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
@@ -26,7 +29,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public TaskDTO getTaskById(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id)
+    public TaskDTO getTaskById(@PathVariable("id") @NotNull(message="id nu poate fi null") String id)
     {
         return taskService.getTaskById(id);
     }
@@ -68,7 +71,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id)
+    public void deleteTask(@PathVariable("id") @NotNull(message="id nu poate fi null") String id)
     {
         taskService.deleteTask(id);
     }
@@ -86,27 +89,32 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public TaskDTO updateTask(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @Valid @RequestBody TaskDTO task)
+    public TaskDTO updateTask(@PathVariable("id") @NotNull(message="id nu poate fi null") String id, @Valid @RequestBody TaskDTO task)
     {
-        return taskService.updateTask(id, task);
+        return taskService.updateTask(task, id);
     }
 
 
 
 
     @PutMapping("/{id}/status")
-    public TaskDTO updateTaskStatus(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @RequestBody String status)
+    public TaskDTO updateTaskStatus(@PathVariable("id") @NotNull(message="id nu poate fi null") String id, @RequestBody String status)
     {
         return taskService.updateTaskStatus(id, status);
     }
 
     @PutMapping("/{id}/content")
-    public TaskDTO updateTaskContent(@PathVariable("id") @NotNull(message="id nu poate fi null") Long id, @RequestBody String content)
+    public TaskDTO updateTaskContent(@PathVariable("id") @NotNull(message="id nu poate fi null") String id, @RequestBody String content)
     {
         return taskService.updateTaskContent(id, content);
     }
 
 
+    @GetMapping("/endswith")
+    public List<TaskDTO> taskContentEndsWith(@RequestParam @NotBlank(message = "Content trebuie sa aiba o valoare") String content)
+        {
+        return taskService.tasksNamesThatEndWith(content);
+        }
 
 
 }

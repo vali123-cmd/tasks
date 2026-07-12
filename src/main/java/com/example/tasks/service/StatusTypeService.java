@@ -35,6 +35,13 @@ public class StatusTypeService {
         StatusType savedStatus = statusTypeRepository.save(status);
         return statusMapper.toDto(savedStatus);
     }
+    @Transactional
+    public void deleteStatusType(String id)
+    {
+        log.info("Status deleted with id: {}", id);
+        statusTypeRepository.deleteById(id);
+    }
+
 
 
 }

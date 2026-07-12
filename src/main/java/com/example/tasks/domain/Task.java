@@ -21,11 +21,10 @@ public class Task {
     @Column(name = "TASK_ID")
     private Long id;
 
-    @Column(name = "NAME")
+    @Column(name = "TASK_NAME")
     private String name;
 
-    @Column(name = "STATUS_TYPE_ID")
-    private String statusTypeId;
+
 
     @Column(name = "USER_ID")
 
@@ -47,12 +46,16 @@ public class Task {
 
     private LocalDateTime lastUpdateDate;
 
-    @Column(name = "LAST_UPDATE_BY")
-    private LocalDateTime lastUpdateBy;
+    @Column(name = "LAST_UPDATED_BY")
+    private String lastUpdateBy;
 
     @Column(name = "CREATED_BY_FULLNAME")
     private String createdByFullname;
 
+
+    @ManyToOne
+    @JoinColumn(name = "STATUS_TYPE_ID")
+    private StatusType statusType;
 
 
 }

@@ -1,161 +1,169 @@
 package com.example.tasks.service;
 
 
+import com.example.tasks.domain.StatusType;
+import com.example.tasks.domain.Task;
 import com.example.tasks.dto.TaskDTO;
+import com.example.tasks.mapper.TaskMapper;
+import com.example.tasks.repository.StatusTypeRepository;
+import com.example.tasks.repository.TaskRepository;
+
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 @Service
 @Slf4j
-
+@RequiredArgsConstructor
 public class TaskService {
-    private List<TaskDTO> tasks = new ArrayList<>();
+    private final TaskRepository taskRepository;
+    private final TaskMapper taskMapper;
+    private final StatusTypeRepository statusTypeRepository;
 
     public List<TaskDTO> getTasks(){
         log.info("Getting all tasks");
-        return tasks;
+        return taskRepository.findAll().stream().map(taskMapper::toDTO).toList();
     }
 
-    public TaskDTO getTaskById(Long id){
+    public TaskDTO getTaskById(String id){
         log.info("Getting task by id: {}", id);
-        for(TaskDTO task: tasks)
-        {
-            if(task.getId() == id)
-            {
-                return task;
-            }
-        }
-        log.warn("Task with id: {} not found", id);
-        return null;
+        return taskRepository.findById(id).map(taskMapper::toDTO).orElse(null);
     }
-
+    @Transactional
     public List<TaskDTO> addTask(TaskDTO task){
-        TaskDTO builtTask = buildTask(task);
-        log.info("Adding task: {}", builtTask);
-        tasks.add(builtTask);
-        return tasks;
+        log.info("Adding task: {}", task);
+        StatusType status = statusTypeRepository.findByStatusName(task.getStatusName()).orElse(null);
+        taskRepository.save(taskMapper.toEntity(task, status));
+        return getTasks();
+
     }
 
 
-    private TaskDTO buildTask(TaskDTO task)
+    @Transactional
+    public TaskDTO updateTask(TaskDTO taskDTO, String id)
     {
-        return TaskDTO.builder()
-                .id(task.getId())
-                .content(task.getContent())
-                .dueDate(task.getDueDate())
-                .status(task.getStatus())
-                .build();
-    }
-
-    public TaskDTO updateTask(Long id, TaskDTO task)
-    {
-        TaskDTO builtTask = buildTask(task);
-        for(TaskDTO t: tasks)
+        log.info("Updating task: {}", taskDTO);
+        Task targetTask = taskRepository.findById(id).orElse(null);
+        if(targetTask == null)
         {
-            if(t.getId() == id)
-            {
-                task.setId(builtTask.getId());
-                task.setContent(builtTask.getContent());
-                task.setDueDate(builtTask.getDueDate());
-                task.setStatus(builtTask.getStatus());
-                return task;
-            }
-
+            log.warn("Task with id: {} not found", id);
+            return null;
         }
+        targetTask.setName(taskDTO.getContent());
+        if (taskDTO.getStatusName() != null) {
 
-        log.warn("Task with id: {} not found", id);
-        return null;
+            StatusType newStatus = statusTypeRepository.findByStatusName(taskDTO.getStatusName())
+                    .orElseThrow(() -> new RuntimeException("Statusul '" + taskDTO.getStatusName() + "' nu este valid!"));
+
+
+            targetTask.setStatusType(newStatus);
+        }
+        targetTask.setDueDate(taskDTO.getDueDate());
+        targetTask.setLastUpdateDate(LocalDateTime.now());
+
+        Task updatedTask = taskRepository.save(targetTask);
+        return taskMapper.toDTO(updatedTask);
 
 
     }
-
-    public List<TaskDTO> deleteTask(Long id)
+    @Transactional
+    public List<TaskDTO> deleteTask(String id)
     {
-        for(TaskDTO task: tasks)
-        {
-            if(task.getId() == id)
-            {
-                log.info("Deleting task with id: {}", id);
-                tasks.remove(task);
-                return tasks;
-            }
-        }
-        log.warn("Task with id: {} not found", id);
-        return tasks;
+        log.info("Deleting task with id: {}", id);
+        taskRepository.deleteById(id);
+        return getTasks();
 
     }
-
+    @Transactional
     public List<TaskDTO> addTasks(List<TaskDTO> tasks)
     {
         log.info("Adding tasks: {}", tasks);
-        this.tasks.addAll(tasks);
-        return this.tasks;
-    }
+        for(TaskDTO t : tasks)
+        {
+            addTask(t);
 
+        }
+        return getTasks();
+    }
+    @Transactional
     public void deleteAllTasks()
     {
         log.info("Deleting all tasks");
-        tasks.clear();
+        taskRepository.deleteAll();
     }
-
-    public TaskDTO updateTaskStatus(Long id, String status) {
-        for (TaskDTO task : tasks) {
-            if (task.getId() == id) {
-                task.setStatus(status);
-                return task;
-            }
+    @Transactional
+    public TaskDTO updateTaskStatus(String id, String status) {
+        Task targetTask = taskRepository.findById(id).orElse(null);
+        if (targetTask != null) {
+            StatusType newStatus = statusTypeRepository.findByStatusName(status)
+                    .orElseThrow(() -> new RuntimeException("Statusul '" + status + "' nu este valid!"));
+            targetTask.setStatusType(newStatus);
+            return taskMapper.toDTO(taskRepository.save(targetTask));
         }
-        log.warn("Task with id: {} not found", id);
         return null;
     }
 
     public List<TaskDTO> getTasksLowerThanDate(LocalDateTime date)
     {
-        log.info("Getting tasks lower than date: {}", date);
-       return tasks.stream()
-               .filter(t -> t.getDueDate().isBefore(date)).collect(java.util.stream.Collectors.toList());
+        return taskRepository.findByDueDateBefore(date).stream()
+                .map(taskMapper::toDTO)
+                .toList();
+
 
     }
 
     public List<TaskDTO> getTasksHigherThanDate(LocalDateTime date)
     {
 
-       return tasks.stream()
-               .filter(t -> t.getDueDate().isAfter(date)).collect(java.util.stream.Collectors.toList());
+        return taskRepository.findByDueDateAfter(date).stream()
+                .map(taskMapper::toDTO)
+                .toList();
     }
 
     public List<TaskDTO> getTasksBetweenDates(LocalDateTime start, LocalDateTime end)
     {
-        return tasks.stream()
-                .filter(t -> t.getDueDate().isAfter(start) && t.getDueDate().isBefore(end)).collect(java.util.stream.Collectors.toList());
+        return taskRepository.findByDueDateBetween(start,end).stream()
+                .map(taskMapper::toDTO)
+                .toList();
     }
+    @Transactional
+    public TaskDTO updateTaskContent(String id, String content) {
 
-    public TaskDTO updateTaskContent(Long id, String content) {
-        for (TaskDTO task : tasks) {
-            if (task.getId() == id) {
-                task.setContent(content);
-                return task;
-            }
+        Task targetTask = taskRepository.findById(id).orElse(null);
+        if (targetTask != null) {
+            targetTask.setName(content);
+            return taskMapper.toDTO(taskRepository.save(targetTask));
         }
-        log.warn("Task with id: {} not found", id);
+
         return null;
     }
 
+    @Transactional
     public List<TaskDTO> removeRandomTask()
     {
 
+        List<Task> tasks = taskRepository.findAll();
+        if (tasks.isEmpty()) {
+            return Collections.emptyList();
+        }
         int randomIndex = (int) (Math.random() * tasks.size());
-        TaskDTO removedTask = tasks.remove(randomIndex);
-        log.info("Removed task: {}", removedTask);
-        return tasks;
+        Task randomTask = tasks.get(randomIndex);
+        taskRepository.delete(randomTask);
+        log.info("Deleted random task with id: {}", randomTask.getId());
+        return getTasks();
 
+    }
+
+    public List<TaskDTO> tasksNamesThatEndWith(String ending) {
+        return taskRepository.findByNameEndsWith(ending).stream().map(taskMapper::toDTO).toList();
     }
 
 
