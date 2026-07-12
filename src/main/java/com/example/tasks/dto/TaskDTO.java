@@ -16,14 +16,22 @@ import java.time.LocalDateTime;
 @ToString
 
 public class TaskDTO {
-    @NotNull
+
     private Long id;
 
     @NotBlank(message = "Content can't be blank")
     private String content;
     @NotNull
     private LocalDateTime dueDate;
-    @NotBlank
-    private String status;
+    @NotNull
+    private String statusName;
+    @NotNull
+    private Long userId;
+
+
+    private String createdBy;
+
+    private LocalDateTime creationDate;
+
 }
 //test comment for versioning

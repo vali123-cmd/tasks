@@ -35,6 +35,12 @@ public class StatusTypeController {
         return statusTypeService.createStatus(statusTypeDTO);
     }
 
+    @DeleteMapping
+    public void deleteStatusById(@PathVariable("id") @NotNull(message = "id nu poate fi null") String id) {
+        statusTypeService.deleteStatusType(id);
+    }
+
+
 
 
 }
