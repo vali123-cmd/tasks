@@ -35,7 +35,11 @@ public class TaskService {
 
     public TaskDTO getTaskById(String id){
         log.info("Getting task by id: {}", id);
-        return taskRepository.findById(id).map(taskMapper::toDTO).orElse(null);
+
+
+        TaskDTO task =  taskRepository.findById(id).map(taskMapper::toDTO).orElseThrow(() -> new RuntimeException("Task not found"));
+
+        return task;
     }
     @Transactional
     public List<TaskDTO> addTask(TaskDTO task){

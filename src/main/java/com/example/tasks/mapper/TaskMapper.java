@@ -24,6 +24,11 @@ public class TaskMapper {
 
     public Task toEntity(TaskDTO taskDTO, StatusType statusType) {
 
+        String createdBy = taskDTO.getCreatedBy();
+
+        if (createdBy == null)
+            createdBy = "System";
+
 
         return Task.builder()
                 .name(taskDTO.getContent())
@@ -31,11 +36,10 @@ public class TaskMapper {
                 .statusType(statusType)
                 .dueDate(taskDTO.getDueDate())
                 .creationDate(LocalDateTime.now())
-                .createdBy(taskDTO.getCreatedBy())
+                .createdBy(createdBy)
                 .lastUpdateDate(LocalDateTime.now())
-                .lastUpdateBy(taskDTO.getCreatedBy())
-                .createdByFullname(taskDTO.getCreatedBy())
-
+                .lastUpdateBy(createdBy)
+                .createdByFullname(createdBy)
                 .build();
     }
 }

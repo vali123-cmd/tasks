@@ -22,12 +22,21 @@ public class UserMapper {
     }
 
     public User toEntity(UserDTO userDTO) {
+        LocalDateTime date = userDTO.getCreationDate();
+        if(userDTO.getCreationDate() == null)
+        {
+            date = LocalDateTime.now();
+        }
+        String createdBy = userDTO.getCreatedBy();
+        if(createdBy == null)
+            createdBy = "System";
         return User.builder().
                 username(userDTO.getUsername()).
                 birthDate(userDTO.getBirthDate()).
-                createdBy(userDTO.getCreatedBy()).
+                createdBy(createdBy).
                 lastUpdateDate(LocalDateTime.now()).
-                lastUpdateBy(userDTO.getCreatedBy()).
+                lastUpdateBy(createdBy).
+                creationDate(date).
                 isInternal(userDTO.isInternal()).
                 build();
     }
