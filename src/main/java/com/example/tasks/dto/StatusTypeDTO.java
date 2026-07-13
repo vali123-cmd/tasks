@@ -18,5 +18,6 @@ public class StatusTypeDTO {
     private String createdBy;
     private LocalDateTime creationDate;
 
+
 }
 
