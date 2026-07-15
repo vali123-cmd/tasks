@@ -1,0 +1,21 @@
+<div class="task-dashboard">
+  <div class="dashboard-header">
+    <h2>My Tasks</h2>
+    <p>Manage and track your upcoming work</p>
+  </div>
+
+  <ul class="task-list">
+    @for (task of sortedTasks(); track task.id) {
+      <li class="task-card">
+        <h3 class="task-title"><strong>Subject: </strong>{{ task.content }}</h3>
+        
+        <div class="task-details">
+          <p class="task-date"><strong>Due date:</strong> {{ task.dueDate }}</p>
+          <span class="task-status">{{ task.statusName }}</span>
+        </div>
+      </li>
+    } @empty {
+      <li class="empty-state">No tasks available.</li>
+    }
+  </ul>
+</div>

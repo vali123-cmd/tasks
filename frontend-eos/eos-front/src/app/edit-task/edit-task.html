@@ -1,0 +1,44 @@
+<section class="task-creation-shell">
+    <div class="hero-panel">
+        <p class="eyebrow">Tasks</p>
+        <h2>Edit task</h2>
+    </div>
+
+    <form class="task-form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="content">Task title</label>
+            <input
+                type="text"
+                id="content"
+                name="content"
+                [(ngModel)]="task().content"
+                required
+            />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="dueDate">Due date</label>
+                <input
+                    type="date"
+                    id="dueDate"
+                    name="dueDate"
+                    [(ngModel)]="task().dueDate"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="statusName">Status</label>
+                <select id="statusName" name="statusName" [(ngModel)]="task().statusName" required>
+                    <option value="" disabled>Select status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In progress</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button">Salvează modificările</button>
+    </form>
+</section>
