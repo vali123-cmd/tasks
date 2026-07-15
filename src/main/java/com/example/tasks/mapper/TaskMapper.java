@@ -24,18 +24,25 @@ public class TaskMapper {
 
     public Task toEntity(TaskDTO taskDTO, StatusType statusType) {
 
+        String createdBy = taskDTO.getCreatedBy();
+
+        if (createdBy == null)
+            createdBy = "System";
+
+        Number id = 1;
+        Long userIdlong = id.longValue();  //nu am autentificare configurata si nu cred ca e ok sa trimit din
+        //front user idul
 
         return Task.builder()
                 .name(taskDTO.getContent())
-                .userId(taskDTO.getUserId())
+                .userId(userIdlong)
                 .statusType(statusType)
                 .dueDate(taskDTO.getDueDate())
                 .creationDate(LocalDateTime.now())
-                .createdBy(taskDTO.getCreatedBy())
+                .createdBy(createdBy)
                 .lastUpdateDate(LocalDateTime.now())
-                .lastUpdateBy(taskDTO.getCreatedBy())
-                .createdByFullname(taskDTO.getCreatedBy())
-
+                .lastUpdateBy(createdBy)
+                .createdByFullname(createdBy)
                 .build();
     }
 }
