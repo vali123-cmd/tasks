@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/tasks")
 @Validated
+@CrossOrigin(origins = "http://localhost:4200")
 public class TaskController {
     private final TaskService taskService;
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
+
 
     @GetMapping
     public List<TaskDTO> getTasks(){

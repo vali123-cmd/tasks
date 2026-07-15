@@ -25,7 +25,7 @@ public class TaskDTO {
     private LocalDateTime dueDate;
     @NotNull
     private String statusName;
-    @NotNull
+
     private Long userId;
 
 
