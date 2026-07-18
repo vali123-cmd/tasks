@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/statuses")
 @Validated
+@CrossOrigin
 public class StatusTypeController {
     private final StatusTypeService statusTypeService;
     public StatusTypeController(StatusTypeService statusTypeService) {

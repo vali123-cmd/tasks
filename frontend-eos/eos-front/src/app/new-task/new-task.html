@@ -1,0 +1,54 @@
+<section class="task-creation-shell">
+    <div class="hero-panel">
+        <p class="eyebrow">Tasks</p>
+        <h2>Create a new task</h2>
+        <p class="hero-copy">
+            Capture the work, set the deadline, and keep the workflow moving.
+        </p>
+
+        <div class="hero-badges" aria-hidden="true">
+            <span>Focused</span>
+            <span>Organized</span>
+            <span>On time</span>
+        </div>
+    </div>
+
+    <form class="task-form" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="content">Task title</label>
+            <input
+                type="text"
+                id="content"
+                name="content"
+                placeholder="Write the task summary"
+                [(ngModel)]="newTask.content"
+                required
+            />
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="dueDate">Due date</label>
+                <input
+                    type="date"
+                    id="dueDate"
+                    name="dueDate"
+                    [(ngModel)]="newTask.dueDate"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="statusName">Status</label>
+                <select id="statusName" name="statusName" [(ngModel)]="newTask.statusName" required>
+                    <option value="">Select status</option>
+                    @for (status of statusNames(); track status) {
+                        <option [value]="status">{{ status }}</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button">Create task</button>
+    </form>
+</section>

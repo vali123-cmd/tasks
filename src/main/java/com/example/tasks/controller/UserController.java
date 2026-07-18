@@ -1,6 +1,7 @@
 package com.example.tasks.controller;
 
 
+import com.example.tasks.dto.CredentialsDTO;
 import com.example.tasks.dto.UserDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
@@ -13,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Validated
+
+@CrossOrigin
 public class UserController {
     private final UserService userService;
     public UserController(UserService userService) {
@@ -47,6 +50,11 @@ public class UserController {
     @GetMapping("/username/{username}")
     public UserDTO getUserByUsername(@PathVariable @NotNull(message = "username nu poate fi null") String username){
         return userService.getUserByUsername(username);
+    }
+
+    @PostMapping("login")
+    public Object UserResponseDTO (@Valid @RequestBody CredentialsDTO LoginDTO){
+        return userService.login(LoginDTO);
     }
 
 

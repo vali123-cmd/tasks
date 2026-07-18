@@ -18,18 +18,21 @@ public class UserMapper {
                 .birthDate(user.getBirthDate())
                 .isInternal(user.isInternal())
                 .creationDate(user.getCreationDate())
+                .email(user.getEmail())
+                .password(user.getPassword())
                 .build();
     }
 
     public User toEntity(UserDTO userDTO) {
         LocalDateTime date = userDTO.getCreationDate();
-        if(userDTO.getCreationDate() == null)
-        {
+        if (userDTO.getCreationDate() == null) {
             date = LocalDateTime.now();
         }
         String createdBy = userDTO.getCreatedBy();
-        if(createdBy == null)
+        if (createdBy == null)
             createdBy = "System";
+
+
         return User.builder().
                 username(userDTO.getUsername()).
                 birthDate(userDTO.getBirthDate()).
@@ -37,7 +40,9 @@ public class UserMapper {
                 lastUpdateDate(LocalDateTime.now()).
                 lastUpdateBy(createdBy).
                 creationDate(date).
-                isInternal(userDTO.isInternal()).
+                isInternal(false).
+                email(userDTO.getEmail()).
+                password(userDTO.getPassword()).
                 build();
     }
 }

@@ -1,0 +1,149 @@
+<div class="task-dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h2>My Tasks</h2>
+      <p>Manage and track your upcoming work</p>
+    </div>
+
+    <button type="button" class="primary-action" (click)="openNewModal()">New task</button>
+  </div>
+
+  <ul class="task-list">
+    @for (task of sortedTasks(); track task.id) {
+      <li class="task-card">
+        <div class="task-card-head">
+          <h3 class="task-title"><strong>Subject: </strong>{{ task.content }}</h3>
+          <button type="button" class="ghost-action" (click)="openEditModal(task)">Edit</button>
+        </div>
+        
+        <div class="task-details">
+          <p class="task-date"><strong>Due date:</strong> {{ task.dueDate }}</p>
+          <span class="task-status">{{ task.statusName }}</span>
+        </div>
+      </li>
+    } @empty {
+      <li class="empty-state">No tasks available.</li>
+    }
+  </ul>
+</div>
+
+@if (activeModal() === 'new') {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <section class="modal-card task-creation-shell" (click)="$event.stopPropagation()">
+      <div class="hero-panel">
+        <p class="eyebrow">Tasks</p>
+        <h2>Create a new task</h2>
+        <p class="hero-copy">
+          Capture the work, set the deadline, and keep the workflow moving.
+        </p>
+
+        <div class="hero-badges" aria-hidden="true">
+          <span>Focused</span>
+          <span>Organized</span>
+          <span>On time</span>
+        </div>
+      </div>
+
+      <form class="task-form" (ngSubmit)="submitNewTask()">
+        <div class="modal-topbar">
+          <span>New task</span>
+          <button type="button" class="close-button" (click)="closeModal()">Close</button>
+        </div>
+
+        <div class="form-group">
+          <label for="new-content">Task title</label>
+          <input
+            type="text"
+            id="new-content"
+            name="content"
+            placeholder="Write the task summary"
+            [(ngModel)]="newTaskForm.content"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="new-dueDate">Due date</label>
+            <input
+              type="date"
+              id="new-dueDate"
+              name="dueDate"
+              [(ngModel)]="newTaskForm.dueDate"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="new-statusName">Status</label>
+            <select id="new-statusName" name="statusName" [(ngModel)]="newTaskForm.statusName" required>
+              <option value="">Select status</option>
+              @for (status of statusNames(); track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Create task</button>
+      </form>
+    </section>
+  </div>
+}
+
+@if (activeModal() === 'edit' && selectedTask) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <section class="modal-card task-creation-shell" (click)="$event.stopPropagation()">
+      <div class="hero-panel">
+        <p class="eyebrow">Tasks</p>
+        <h2>Edit task</h2>
+        <p class="hero-copy">
+          Update the details for {{ selectedTask.content }}.
+        </p>
+      </div>
+
+      <form class="task-form" (ngSubmit)="submitEditTask()">
+        <div class="modal-topbar">
+          <span>Edit task</span>
+          <button type="button" class="close-button" (click)="closeModal()">Close</button>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-content">Task title</label>
+          <input
+            type="text"
+            id="edit-content"
+            name="content"
+            [(ngModel)]="editTaskForm.content"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="edit-dueDate">Due date</label>
+            <input
+              type="date"
+              id="edit-dueDate"
+              name="dueDate"
+              [(ngModel)]="editTaskForm.dueDate"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="edit-statusName">Status</label>
+            <select id="edit-statusName" name="statusName" [(ngModel)]="editTaskForm.statusName" required>
+              <option value="">Select status</option>
+              @for (status of statusNames(); track status) {
+                <option [value]="status">{{ status }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">Save changes</button>
+      </form>
+    </section>
+  </div>
+}
