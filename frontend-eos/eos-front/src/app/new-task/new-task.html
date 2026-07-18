@@ -42,9 +42,9 @@
                 <label for="statusName">Status</label>
                 <select id="statusName" name="statusName" [(ngModel)]="newTask.statusName" required>
                     <option value="">Select status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="In Progress">In progress</option>
-                    <option value="Completed">Completed</option>
+                    @for (status of statusNames(); track status) {
+                        <option [value]="status">{{ status }}</option>
+                    }
                 </select>
             </div>
         </div>

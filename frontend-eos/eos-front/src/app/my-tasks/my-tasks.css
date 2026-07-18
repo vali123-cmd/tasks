@@ -15,6 +15,7 @@
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-color);
   border-radius: 12px;
+  position: relative;
 }
 
 /* --- Header Styling --- */
@@ -22,6 +23,10 @@
   margin-bottom: 2rem;
   border-bottom: 2px solid var(--border-color);
   padding-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .dashboard-header h2 {
@@ -57,6 +62,13 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.task-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .task-card:hover {
@@ -106,6 +118,82 @@
   letter-spacing: 0.5px;
 }
 
+.primary-action,
+.ghost-action,
+.close-button {
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  transition: transform 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.primary-action {
+  padding: 0.8rem 1.1rem;
+  background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%);
+  color: #ffffff;
+  box-shadow: 0 14px 28px rgba(29, 78, 216, 0.2);
+}
+
+.ghost-action {
+  padding: 0.55rem 0.9rem;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.primary-action:hover,
+.ghost-action:hover,
+.close-button:hover {
+  transform: translateY(-1px);
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.68);
+  backdrop-filter: blur(10px);
+}
+
+.modal-card {
+  width: min(100%, 1080px);
+  margin: 0;
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.28);
+}
+
+.modal-card.task-creation-shell {
+  background: #0f172a;
+}
+
+.modal-card .hero-panel {
+  background: #111827;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.modal-card .task-form {
+  background: #0b1220;
+  border-color: rgba(148, 163, 184, 0.2);
+}
+
+.modal-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.close-button {
+  padding: 0.55rem 0.9rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+}
+
 /* --- Empty State Styling --- */
 .empty-state {
   text-align: center;
@@ -115,4 +203,15 @@
   border-radius: 8px;
   color: var(--text-muted);
   font-style: italic;
+}
+
+@media (max-width: 900px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .task-card-head {
+    flex-direction: column;
+  }
 }

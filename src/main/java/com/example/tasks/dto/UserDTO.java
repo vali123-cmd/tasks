@@ -21,6 +21,13 @@ public class UserDTO {
     @NotNull
     private LocalDateTime birthDate;
 
+    @NotBlank(message = "Password can't be blank")
+    private String password;
+
+    @NotBlank(message = "Email can't be blank")
+    private String email;
+
+
     private boolean isInternal;
     private String createdBy;
     private LocalDateTime creationDate;

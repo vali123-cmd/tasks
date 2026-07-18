@@ -1,17 +1,21 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {TaskPostDTO} from '../interfaces/taskPostDTO';
 import {FormsModule} from '@angular/forms';
 import { Tasks } from '../services/tasks';
+import { StatusNames } from '../services/status-names';
 @Component({
   selector: 'app-new-task',
   imports: [FormsModule],
   templateUrl: './new-task.html',
   styleUrl: './new-task.css',
 })
-export class NewTask {
+export class NewTask implements OnInit {
 //create a task object with the same structure as the TaskPostDTO interface
 
   private taskService = inject(Tasks);
+  private statusService = inject(StatusNames);
+
+  protected readonly statusNames = signal<string[]>([]);
 
   
   newTask: TaskPostDTO = {
@@ -19,6 +23,12 @@ export class NewTask {
     dueDate: '',
     statusName: ''
   };
+
+  ngOnInit() {
+    this.statusService.getStatusNames().subscribe((statusNames) => {
+      this.statusNames.set(statusNames);
+    });
+  }
 
   onSubmit() {
     if (!this.newTask.content || !this.newTask.dueDate || !this.newTask.statusName) {
@@ -39,9 +49,6 @@ export class NewTask {
       }
     });
   }
-
-
-  
 
 
 }

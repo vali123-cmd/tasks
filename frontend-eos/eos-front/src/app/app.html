@@ -1,9 +1,21 @@
 <nav>
-    <a routerLink="/home">Home</a>
-    <a routerLink="/about">About</a>
-    <a routerLink="/my-tasks">My Tasks</a>
-    <a routerLink="/new-task">New Task</a>
-    <a routerLink="/search">Search</a>
+    
+  <ul>
+    
+    <li><a class = "nav-link" routerLink="/new-task" routerLinkActive="active">New Task</a></li>
+    <li><a class = "nav-link" routerLink="/my-tasks" routerLinkActive="active">My Tasks</a></li>
+    <li><a class = "nav-link" routerLink="/login" routerLinkActive="active">Login</a></li>
+  </ul>
 </nav>
 
-<router-outlet></router-outlet>
+
+@if (isLoggedIn()) {
+    <div class="user-info">
+    <div class="welcome-message">Welcome, {{ getUser().username }}!</div>
+    <button type="button" class="logout-button" (click)="logout()">Logout</button>
+    </div>
+} @else {
+    <a routerLink="/login">Login</a>
+}
+
+<router-outlet/>

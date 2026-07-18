@@ -25,6 +25,12 @@ public class User {
     @Column(name = "USERNAME")
     private String username;
 
+    @Column(name = "PASSWORD")
+    private String password;
+
+    @Column(name = "EMAIL")
+    private String email;
+
     @Column(name = "BIRTH_DATE")
     private LocalDateTime birthDate;
 
