@@ -3,21 +3,25 @@ package com.example.tasks.service;
 
 import com.example.tasks.domain.StatusType;
 import com.example.tasks.domain.Task;
+import com.example.tasks.domain.User;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.mapper.TaskMapper;
 import com.example.tasks.repository.StatusTypeRepository;
 import com.example.tasks.repository.TaskRepository;
+import com.example.tasks.repository.UserRepository;
 
-import lombok.Builder;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -27,6 +31,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
     private final StatusTypeRepository statusTypeRepository;
+    private final UserRepository userRepository;
 
     public List<TaskDTO> getTasks(){
         log.info("Getting all tasks");
@@ -45,7 +50,8 @@ public class TaskService {
     public List<TaskDTO> addTask(TaskDTO task){
         log.info("Adding task: {}", task);
         StatusType status = statusTypeRepository.findByStatusName(task.getStatusName()).orElse(null);
-        taskRepository.save(taskMapper.toEntity(task, status));
+        User user = userRepository.findById(task.getAssignedTo()).orElse(null);
+        taskRepository.save(taskMapper.toEntity(task, status, user));
         return getTasks();
 
     }
@@ -56,6 +62,7 @@ public class TaskService {
     {
         log.info("Updating task: {}", taskDTO);
         Task targetTask = taskRepository.findById(id).orElse(null);
+        User targetUser = userRepository.findById(taskDTO.getAssignedTo()).orElse(null);
         if(targetTask == null)
         {
             log.warn("Task with id: {} not found", id);
@@ -72,6 +79,8 @@ public class TaskService {
         }
         targetTask.setDueDate(taskDTO.getDueDate());
         targetTask.setLastUpdateDate(LocalDateTime.now());
+
+        targetTask.setUser(targetUser);
 
 
         Task updatedTask = taskRepository.save(targetTask);
@@ -171,7 +180,51 @@ public class TaskService {
         return taskRepository.findByNameEndsWith(ending).stream().map(taskMapper::toDTO).toList();
     }
 
+    public List<TaskDTO> findTasksByName(String name)
+    {
+        return taskRepository.findByNameContaining(name).stream().map(taskMapper::toDTO).toList();
+    }
 
+    public List<TaskDTO> findTasksByStatus(String statusName) {
+        StatusType statusType = statusTypeRepository.findByStatusName(statusName)
+                .orElseThrow(() -> new RuntimeException("Statusul '" + statusName + "' nu este valid!"));
+        return taskRepository.findByStatusType(statusType).stream().map(taskMapper::toDTO).toList();
+    }
+
+    public List<TaskDTO> findTasksByUsername(String username)
+    {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Userul '" + username + "' nu exista!"));
+        log.info("User with username: {} found", username);
+        return taskRepository.findByUser(user).stream().map(taskMapper::toDTO).toList();
+
+    }
+
+    public List<TaskDTO> findTasksByDueDate(LocalDateTime dueDate)
+    {
+        return taskRepository.findByDueDate(dueDate).stream().map(taskMapper::toDTO).toList();
+    }
+
+
+    public List<TaskDTO> searchTasks(String name, String statusName, String username, LocalDate startDate, LocalDate endDate) {
+
+
+        LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
+        LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
+
+
+        List<Task> tasks = taskRepository.searchTasks(
+                name,
+                statusName,
+                username,
+                startDateTime,
+                endDateTime
+        );
+
+        return tasks.stream()
+                .map(taskMapper::toDTO)
+                .collect(Collectors.toList());
+    }
 
 
 

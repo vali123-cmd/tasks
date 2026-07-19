@@ -1,9 +1,9 @@
 package com.example.tasks.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.tasks.domain.Task;
 import com.example.tasks.dto.TaskDTO;
 import com.example.tasks.service.TaskService;
 import jakarta.validation.Valid;
@@ -117,6 +117,45 @@ public class TaskController {
         {
         return taskService.tasksNamesThatEndWith(content);
         }
+
+    @GetMapping("/searchAssigned")
+    public List<TaskDTO> searchAssignedTo(@RequestParam @NotBlank(message = "AssignedTo trebuie sa aiba o valoare") String assignedTo)
+    {
+        return taskService.findTasksByUsername(assignedTo);
+
+    }
+
+    @GetMapping("/searchStatus")
+    public List<TaskDTO> searchStatus(@RequestParam @NotBlank(message = "Status trebuie sa aiba o valoare") String status)
+    {
+        return taskService.findTasksByStatus(status);
+
+    }
+
+    @GetMapping("/searchDueDate")
+    public List<TaskDTO> searchDueDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @NotBlank(message = "DueDate trebuie sa aiba o valoare") String dueDate)
+    {
+        return taskService.findTasksByDueDate(LocalDateTime.parse(dueDate));
+
+    }
+
+    @GetMapping("/searchName")
+    public List<TaskDTO> searchName(@RequestParam  @NotBlank(message = "Name trebuie sa aiba o valoare") String name)
+    {
+        return taskService.findTasksByName(name);
+
+    }
+
+    @GetMapping("/search")
+    public List<TaskDTO> search(@RequestParam(required = false) String name,
+                                @RequestParam(required = false) String status,
+                                @RequestParam(required = false) String assignedTo,
+                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate)
+    {
+        return taskService.searchTasks(name, status, assignedTo, startDate, endDate);
+    }
+
 
 
 }

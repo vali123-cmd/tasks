@@ -1,13 +1,15 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Tasks } from '../services/tasks';
 import { Task } from '../interfaces/task';
 import { StatusNames } from '../services/status-names';
 import { TaskPostDTO } from '../interfaces/taskPostDTO';
+import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
+import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-tasks',
-  imports: [FormsModule],
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './my-tasks.html',
   styleUrl: './my-tasks.css',
 })
@@ -16,20 +18,57 @@ import { TaskPostDTO } from '../interfaces/taskPostDTO';
 export class MyTasks implements OnInit {
   private taskService = inject(Tasks);
   private statusService = inject(StatusNames);
+  private fb = inject(FormBuilder);
   
   sortedTasks = signal<Task[]>([]);
-  statusNames = signal<string[]>([]);
+  
+
+
+  statusNames = signal<StatusTypeDTO[]>([]);
   activeModal = signal<'new' | 'edit' | null>(null);
   selectedTask: Task | null = null;
   newTaskForm: TaskPostDTO = this.createEmptyTaskForm();
   editTaskForm: TaskPostDTO = this.createEmptyTaskForm();
 
+  searchForm!: FormGroup;
+
+
   ngOnInit() {
+    this.initSearchForm();
     this.refreshTasks();
     this.statusService.getStatusNames().subscribe((statusNames) => {
       this.statusNames.set(statusNames);
     });
   }
+  initSearchForm() {
+    this.searchForm = this.fb.group({
+      name: [''],
+      status: [''],
+      assignedTo: [''],
+      startDate: [''],
+      endDate: ['']
+    });
+
+    this.searchForm.valueChanges.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(filters => {
+      this.applyFilters(filters);
+    });
+  }
+
+  applyFilters(filters: any) {
+    console.log('Filtrele trimise sunt:', filters);
+    this.taskService.searchTasks(filters).subscribe({
+      next: (tasks: Task[]) => {
+        this.sortedTasks.set(tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
+      },
+      error: (err) => console.error('Eroare la filtrare', err)
+    });
+  }
+
+
+
 
   openNewModal() {
     this.newTaskForm = this.createEmptyTaskForm();
@@ -109,4 +148,7 @@ export class MyTasks implements OnInit {
     };
 
   }
+
+  
+
 }

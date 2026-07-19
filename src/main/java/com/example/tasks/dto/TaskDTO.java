@@ -1,6 +1,7 @@
 package com.example.tasks.dto;
 
 
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
@@ -26,7 +27,7 @@ public class TaskDTO {
     @NotNull
     private String statusName;
 
-    private Long userId;
+    private Long AssignedTo;
 
 
     private String createdBy;

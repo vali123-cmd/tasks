@@ -42,8 +42,8 @@
                 <label for="statusName">Status</label>
                 <select id="statusName" name="statusName" [(ngModel)]="newTask.statusName" required>
                     <option value="">Select status</option>
-                    @for (status of statusNames(); track status) {
-                        <option [value]="status">{{ status }}</option>
+                    @for (status of statusNames(); track status.statusTypeId) {
+                        <option [value]="status.statusName">{{ status.statusName }}</option>
                     }
                 </select>
             </div>
