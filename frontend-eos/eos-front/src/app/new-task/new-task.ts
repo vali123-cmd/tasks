@@ -3,6 +3,7 @@ import {TaskPostDTO} from '../interfaces/taskPostDTO';
 import {FormsModule} from '@angular/forms';
 import { Tasks } from '../services/tasks';
 import { StatusNames } from '../services/status-names';
+import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
 @Component({
   selector: 'app-new-task',
   imports: [FormsModule],
@@ -15,7 +16,7 @@ export class NewTask implements OnInit {
   private taskService = inject(Tasks);
   private statusService = inject(StatusNames);
 
-  protected readonly statusNames = signal<string[]>([]);
+  protected readonly statusNames = signal<StatusTypeDTO[]>([]);
 
   
   newTask: TaskPostDTO = {

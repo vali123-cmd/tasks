@@ -1,3 +1,70 @@
+<div class="search-container">
+  <h3>Filtreaza taskuri:</h3>
+  
+
+  <form [formGroup]="searchForm" class="filter-grid">
+    
+
+    <div class="form-group">
+      <label for="name">Cuvant cheie:</label>
+      <input 
+        type="text" 
+        id="name" 
+        formControlName="name" 
+        placeholder="Ex: bug login...">
+    </div>
+
+    <div class="form-group">
+      <label for="statusName">Status:</label>
+      <select id="statusName" formControlName="status">
+        <option value="">Toate statusurile</option>
+        
+     
+        @for (status of statusNames(); track status.statusName) {
+          <option [value]="status.statusName">
+            {{ status.statusName }}
+          </option>
+        }
+      </select>
+    </div>
+
+    
+    <div class="form-group">
+      <label for="assignedTo">Asignat lui:</label>
+      <input 
+        type="text" 
+        id="assignedTo" 
+        formControlName="assignedTo" 
+        placeholder="Username (ex: alex.pop)">
+    </div>
+
+    
+    <div class="form-group">
+      <label for="startDate">De la data:</label>
+      <input 
+        type="date" 
+        id="startDate" 
+        formControlName="startDate">
+    </div>
+
+    
+    <div class="form-group">
+      <label for="endDate">Pana la data:</label>
+      <input 
+        type="date" 
+        id="endDate" 
+        formControlName="endDate">
+    </div>
+
+  </form>
+</div>
+
+<hr class="separator">
+
+
+
+
+
 <div class="task-dashboard">
   <div class="dashboard-header">
     <div>
@@ -26,6 +93,8 @@
     }
   </ul>
 </div>
+
+
 
 @if (activeModal() === 'new') {
   <div class="modal-backdrop" (click)="closeModal()">
@@ -78,8 +147,8 @@
             <label for="new-statusName">Status</label>
             <select id="new-statusName" name="statusName" [(ngModel)]="newTaskForm.statusName" required>
               <option value="">Select status</option>
-              @for (status of statusNames(); track status) {
-                <option [value]="status">{{ status }}</option>
+              @for (status of statusNames(); track status.statusTypeId) {
+                <option [value]="status.statusName">{{ status.statusName }}</option>
               }
             </select>
           </div>
@@ -135,8 +204,8 @@
             <label for="edit-statusName">Status</label>
             <select id="edit-statusName" name="statusName" [(ngModel)]="editTaskForm.statusName" required>
               <option value="">Select status</option>
-              @for (status of statusNames(); track status) {
-                <option [value]="status">{{ status }}</option>
+              @for (status of statusNames(); track status.statusTypeId) {
+                <option [value]="status.statusName">{{ status.statusName }}</option>
               }
             </select>
           </div>
@@ -146,4 +215,5 @@
       </form>
     </section>
   </div>
+
 }

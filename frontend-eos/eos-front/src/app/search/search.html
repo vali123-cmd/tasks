@@ -1,8 +1,38 @@
-<p>search works!</p>
+<section class="search-shell">
+	<div class="search-copy">
+		<p class="eyebrow">Search</p>
+		<h2>Find tasks faster</h2>
+		<p class="search-description">
+			Look up tasks by title, status, or anything else you need to locate quickly.
+		</p>
 
+		<div class="search-pills" aria-hidden="true">
+			<span>Titles</span>
+			<span>Status</span>
+			<span>Owners</span>
+		</div>
+	</div>
 
-<input type="text" placeholder="Search..." class="search-input" oninput={handleSearch} />
-<ul class="search-results">
+	<label class="search-field" for="task-search">
+		<span class="search-icon" aria-hidden="true"></span>
+		<input
+			id="task-search"
+			type="text"
+			placeholder="Search tasks"
+			class="search-input"
+		/>
+	</label>
 
-    
-</ul>
+	<div class="search-results-panel">
+		<div class="search-results-header">
+			<span>Results</span>
+			<span class="search-results-count">0</span>
+		</div>
+
+		<ul class="search-results">
+			<li class="search-empty-state">
+				Start typing to see matching tasks.
+			</li>
+		</ul>
+	</div>
+</section>

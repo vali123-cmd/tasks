@@ -4,6 +4,7 @@ import com.example.tasks.domain.StatusType;
 import com.example.tasks.domain.Task;
 import com.example.tasks.dto.TaskDTO;
 import org.springframework.stereotype.Component;
+import com.example.tasks.domain.User;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,7 @@ public class TaskMapper {
         return TaskDTO.builder()
                 .id(task.getId())
                 .content(task.getName())
-                .userId(task.getUserId())
+                .AssignedTo(task.getUser() != null ? task.getUser().getUserId() : null)
                 .statusName(task.getStatusType() != null ? task.getStatusType().getStatusName() : null)
                 .dueDate(task.getDueDate())
                 .creationDate(task.getCreationDate())
@@ -22,20 +23,19 @@ public class TaskMapper {
                 .build();
     }
 
-    public Task toEntity(TaskDTO taskDTO, StatusType statusType) {
+    public Task toEntity(TaskDTO taskDTO, StatusType statusType, User user) {
 
         String createdBy = taskDTO.getCreatedBy();
 
-        if (createdBy == null)
+        if (createdBy == null) {
             createdBy = "System";
+        }
 
-        Number id = 1;
-        Long userIdlong = id.longValue();  //nu am autentificare configurata si nu cred ca e ok sa trimit din
-        //front user idul
+
 
         return Task.builder()
                 .name(taskDTO.getContent())
-                .userId(userIdlong)
+                .user(user)
                 .statusType(statusType)
                 .dueDate(taskDTO.getDueDate())
                 .creationDate(LocalDateTime.now())

@@ -26,9 +26,10 @@ public class Task {
 
 
 
-    @Column(name = "USER_ID")
 
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "USER_ID")
+    private User user;
 
     @Column(name = "DUE_DATE")
     private LocalDateTime dueDate;

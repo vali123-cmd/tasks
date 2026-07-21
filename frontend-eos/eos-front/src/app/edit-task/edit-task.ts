@@ -4,6 +4,7 @@ import { Tasks } from '../services/tasks';
 import {TaskPostDTO} from '../interfaces/taskPostDTO';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StatusNames } from '../services/status-names';
+import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
 
 
 
@@ -16,7 +17,7 @@ import { StatusNames } from '../services/status-names';
 export class EditTask {
   private taskService = inject(Tasks);
   private statusService = inject(StatusNames);
-  protected statusNames: string[] = [];
+  protected statusNames: StatusTypeDTO[] = [];
   task: TaskPostDTO = {
     content: '',
     dueDate: '',
