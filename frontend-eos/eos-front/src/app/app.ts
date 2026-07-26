@@ -1,28 +1,32 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import localStorageUtils from './utils/localStorageUtils';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
   protected readonly title = signal('eos-front');
   
-  getUser(){
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  isLoggedIn(): boolean {
+    if(localStorageUtils.getItem(localStorageUtils.tokenKey)) {
+      return true;
+    }
+    return false;
   }
 
-
-  isLoggedIn() {
-    const user = localStorage.getItem('user');
-    return user !== null;
+  logout(): void {
+    localStorageUtils.deleteItem(localStorageUtils.tokenKey);
+    window.location.reload();
   }
+
   
-  logout() {
-    localStorage.removeItem('user');
-    window.location.href = '/login'; 
-  }
+
+  
+
+
+
 }

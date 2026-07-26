@@ -9,11 +9,11 @@ export class Users {
   private http = inject(HttpClient);
 
   login(credentials: CredentialsDTO) {
-    return this.http.post('http://localhost:8080/users/login', credentials);
+    return this.http.post('http://localhost:8080/auth/login', credentials, { responseType: 'text' });
   }
 
   createUser(credentials: RegisterCredentialsDTO) {
-    return this.http.post('http://localhost:8080/users', credentials);
+    return this.http.post('http://localhost:8080/auth/register', credentials, { responseType: 'text' });
   }
   
 }

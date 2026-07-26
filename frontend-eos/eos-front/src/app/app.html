@@ -1,21 +1,23 @@
-<nav>
-    
-  <ul>
-    
-    <li><a class = "nav-link" routerLink="/new-task" routerLinkActive="active">New Task</a></li>
-    <li><a class = "nav-link" routerLink="/my-tasks" routerLinkActive="active">My Tasks</a></li>
-    <li><a class = "nav-link" routerLink="/login" routerLinkActive="active">Login</a></li>
-  </ul>
-</nav>
+<header class="topbar">
+  <nav class="navbar" aria-label="Primary">
+    <a class="brand" routerLink="/home">Eos Tasks</a>
 
+    <ul class="nav-list">
+      <li><a class="nav-link" routerLink="/new-task" routerLinkActive="active">New Task</a></li>
+      <li><a class="nav-link" routerLink="/my-tasks" routerLinkActive="active">My Tasks</a></li>
 
-@if (isLoggedIn()) {
-    <div class="user-info">
-    <div class="welcome-message">Welcome, {{ getUser().username }}!</div>
-    <button type="button" class="logout-button" (click)="logout()">Logout</button>
-    </div>
-} @else {
-    <a routerLink="/login">Login</a>
-}
+      @if (isLoggedIn()) {
+        <li class="auth-area">
+          <div class="user-info">
+            <div class="welcome-message">Bine ai venit!</div>
+            <button type="button" class="logout-button" (click)="logout()">Logout</button>
+          </div>
+        </li>
+      } @else {
+        <li><a class="nav-link nav-link--accent" routerLink="/login" routerLinkActive="active">Login</a></li>
+      }
+    </ul>
+  </nav>
+</header>
 
 <router-outlet/>

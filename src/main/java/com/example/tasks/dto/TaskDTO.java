@@ -27,9 +27,10 @@ public class TaskDTO {
     @NotNull
     private String statusName;
 
+
     private Long AssignedTo;
 
-
+    @NotNull
     private String createdBy;
 
     private LocalDateTime creationDate;
