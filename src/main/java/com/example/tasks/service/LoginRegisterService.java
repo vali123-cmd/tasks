@@ -1,8 +1,10 @@
 package com.example.tasks.service;
 
+import com.example.tasks.domain.Role;
 import com.example.tasks.domain.User;
 import com.example.tasks.dto.CredentialsDTO;
 import com.example.tasks.dto.UserDTO;
+import com.example.tasks.repository.RoleRepository;
 import com.example.tasks.repository.UserRepository;
 import com.example.tasks.mapper.UserMapper;
 
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -26,11 +29,14 @@ import java.util.Base64;
 @Service
 public class LoginRegisterService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+
     @Value("${jwt.secret}") String jwtSecret;
     @Value("${jwt.expiration.ms}") String jwtExpiration;
 
-    public LoginRegisterService(UserRepository userRepository) {
+    public LoginRegisterService(UserRepository userRepository, RoleRepository roleRepository ) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
     public ResponseEntity login(CredentialsDTO credentialsDTO) throws JoseException {
 
@@ -58,7 +64,9 @@ public class LoginRegisterService {
         JwtClaims claims = new JwtClaims();
         claims.setIssuedAtToNow();
         claims.setExpirationTimeMinutesInTheFuture((float) Long.parseLong(jwtExpiration)/(1000*60));
+        claims.setClaim("email", email);
         claims.setSubject(email);
+        claims.setClaim("roleId", userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found")).getRole().getRoleId());
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
@@ -66,7 +74,10 @@ public class LoginRegisterService {
         return jws.getCompactSerialization();
     }
 
+
+
     public ResponseEntity register(UserDTO userDTO) throws JoseException{
+        Role defaultRole = roleRepository.findByRolename("USER").orElseThrow(() -> new RuntimeException("Role not found"));
         userDTO.setEmail(new String(Base64.getDecoder().decode(userDTO.getEmail())));
         User user = userRepository.findByEmail(userDTO.getEmail()).orElse(null);
         if(user != null)
@@ -75,11 +86,14 @@ public class LoginRegisterService {
         userDTO.setUsername(new String(Base64.getDecoder().decode(userDTO.getUsername())));
         userDTO.setPassword(new String(Base64.getDecoder().decode(userDTO.getPassword())));
         userDTO.setBirthDate(userDTO.getBirthDate());
+
+
         String hashPassword = Credential.MD5.digest(userDTO.getPassword()).replaceFirst("MD5:","");
         userDTO.setPassword(hashPassword);
 
         UserMapper userMapper = new UserMapper();
         userRepository.save(userMapper.toEntity(userDTO));
+
         log.info("User created: {}", userDTO);
 
 

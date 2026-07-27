@@ -13,6 +13,8 @@ import com.example.tasks.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +35,30 @@ public class TaskService {
     private final StatusTypeRepository statusTypeRepository;
     private final UserRepository userRepository;
 
+    private Authentication getAuth() {
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
+
+    private boolean hasAuthority(String authority) {
+        return getAuth().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals(authority));
+    }
+
+    private String getCurrentUserEmail() {
+        return getAuth().getName();
+    }
+
     public List<TaskDTO> getTasks(){
+        String email = getCurrentUserEmail();
         log.info("Getting all tasks");
-        return taskRepository.findAll().stream().map(taskMapper::toDTO).toList();
+        if (hasAuthority("READ_ALL_TASKS")) {
+            return taskRepository.findAll().stream().map(taskMapper::toDTO).toList();
+        }
+        else{
+            User user = userRepository.findByEmail(email).orElse(null);
+            return taskRepository.findByUser(user).stream().map(taskMapper::toDTO).toList();
+        }
+
     }
 
     public TaskDTO getTaskById(String id){

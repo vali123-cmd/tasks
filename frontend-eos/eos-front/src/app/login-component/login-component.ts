@@ -18,6 +18,8 @@ export class LoginComponent {
   usersService = inject(Users);
   private fb = inject(FormBuilder);
   router = inject(Router);
+  errorLogin: boolean = false;
+  errorRegister: boolean = false;
 
   loginForm: FormGroup = this.fb.group({
     email: '',
@@ -64,6 +66,7 @@ export class LoginComponent {
       next: (response: any) => {
         if(response.startsWith('403'))
         {
+          this.errorLogin = true;
           console.error('Login failed: Invalid credentials');
           return;
         }
@@ -93,6 +96,7 @@ export class LoginComponent {
           localStorageUtils.setItem(localStorageUtils.tokenKey, response as string);
         },
         error: (err) => {
+          this.errorRegister = true;
           console.error('Error creating user', err);
         }
       });

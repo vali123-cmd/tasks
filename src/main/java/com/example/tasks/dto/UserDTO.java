@@ -28,6 +28,7 @@ public class UserDTO {
     private String email;
 
 
+
     private boolean isInternal;
     private String createdBy;
     private LocalDateTime creationDate;
