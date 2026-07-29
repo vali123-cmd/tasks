@@ -1,20 +1,21 @@
 :host {
 	display: block;
 	padding: 1.25rem;
-	color: #e2e8f0;
+	color: #f4f7fb;
 
-	--panel: rgba(15, 23, 42, 0.8);
-	--panel-strong: rgba(15, 23, 42, 0.94);
-	--line: rgba(148, 163, 184, 0.16);
-	--line-strong: rgba(96, 165, 250, 0.38);
-	--text: #e2e8f0;
-	--muted: #94a3b8;
-	--accent: #14b8a6;
-	--accent-2: #3b82f6;
-	--shadow: 0 24px 60px rgba(15, 23, 42, 0.28);
+	--panel: rgba(8, 17, 31, 0.72);
+	--panel-strong: rgba(8, 17, 31, 0.92);
+	--line: rgba(255, 255, 255, 0.12);
+	--line-strong: rgba(119, 217, 204, 0.42);
+	--text: #f4f7fb;
+	--muted: rgba(244, 247, 251, 0.72);
+	--accent: #77d9cc;
+	--accent-2: #f9d976;
+	--shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
 
 	position: relative;
-	max-width: 920px;
+	width: min(100%, 760px);
+	max-width: 760px;
 	margin: 0 auto;
 }
 
@@ -25,9 +26,9 @@
 	z-index: 0;
 	border-radius: 30px;
 	background:
-		radial-gradient(circle at 16% 14%, rgba(59, 130, 246, 0.24), transparent 28%),
-		radial-gradient(circle at 84% 10%, rgba(20, 184, 166, 0.18), transparent 24%),
-		linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.9));
+		radial-gradient(circle at 18% 14%, rgba(119, 217, 204, 0.22), transparent 28%),
+		radial-gradient(circle at 82% 10%, rgba(249, 217, 118, 0.2), transparent 24%),
+		linear-gradient(180deg, rgba(8, 17, 31, 0.98), rgba(12, 23, 40, 0.92));
 	box-shadow: var(--shadow);
 }
 
@@ -37,8 +38,8 @@
 	inset: 1px;
 	z-index: 0;
 	border-radius: 29px;
-	background-image: linear-gradient(rgba(148, 163, 184, 0.06) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+	background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
 	background-size: 28px 28px;
 	mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 72%);
 	pointer-events: none;
@@ -52,11 +53,11 @@
 .search-shell {
 	display: grid;
 	gap: 1rem;
-	padding: 1.25rem;
-	border: 1px solid rgba(255, 255, 255, 0.08);
+	padding: 1.15rem;
+	border: 1px solid rgba(255, 255, 255, 0.1);
 	border-radius: 24px;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
-	backdrop-filter: blur(14px);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+	backdrop-filter: blur(18px);
 }
 
 .search-copy {
@@ -66,7 +67,7 @@
 
 .eyebrow {
 	margin: 0;
-	color: #7dd3fc;
+	color: #91e7dc;
 	font-size: 0.78rem;
 	font-weight: 800;
 	letter-spacing: 0.18em;
@@ -75,13 +76,13 @@
 
 .search-copy h2 {
 	margin: 0;
-	font-size: clamp(1.65rem, 2.7vw, 2.55rem);
+	font-size: clamp(1.55rem, 2.4vw, 2.1rem);
 	line-height: 1.05;
 	letter-spacing: -0.04em;
 }
 
 .search-description {
-	max-width: 56ch;
+	max-width: 48ch;
 	margin: 0;
 	color: var(--muted);
 	font-size: 0.98rem;
@@ -97,10 +98,10 @@
 
 .search-pills span {
 	padding: 0.42rem 0.75rem;
-	border: 1px solid rgba(148, 163, 184, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: 999px;
-	background: rgba(255, 255, 255, 0.06);
-	color: #dbeafe;
+	background: rgba(255, 255, 255, 0.05);
+	color: #f4f7fb;
 	font-size: 0.74rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
@@ -115,21 +116,25 @@
 	padding: 0.6rem 0.85rem;
 	border: 1px solid var(--line);
 	border-radius: 18px;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-	transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+	transition:
+		border-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease,
+		background-color 160ms ease;
 }
 
 .search-field:focus-within {
 	border-color: var(--line-strong);
-	box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14), 0 18px 36px rgba(15, 23, 42, 0.14);
+	box-shadow: 0 0 0 4px rgba(119, 217, 204, 0.14), 0 18px 36px rgba(0, 0, 0, 0.18);
 	transform: translateY(-1px);
 }
 
 .search-icon {
 	width: 1rem;
 	height: 1rem;
-	border: 2px solid #93c5fd;
+	border: 2px solid #91e7dc;
 	border-radius: 999px;
 	position: relative;
 	opacity: 0.9;
@@ -143,7 +148,7 @@
 	width: 0.42rem;
 	height: 2px;
 	border-radius: 999px;
-	background: #93c5fd;
+	background: #91e7dc;
 	transform: rotate(45deg);
 	transform-origin: center;
 }
@@ -160,14 +165,14 @@
 }
 
 .search-input::placeholder {
-	color: #94a3b8;
+	color: rgba(244, 247, 251, 0.52);
 }
 
 .search-results-panel {
 	padding: 1rem;
 	border: 1px solid var(--line);
 	border-radius: 20px;
-	background: rgba(15, 23, 42, 0.56);
+	background: rgba(8, 17, 31, 0.62);
 }
 
 .search-results-header {
@@ -176,7 +181,7 @@
 	align-items: center;
 	gap: 1rem;
 	margin-bottom: 0.85rem;
-	color: #cbd5e1;
+	color: rgba(244, 247, 251, 0.82);
 	font-size: 0.84rem;
 	font-weight: 700;
 	letter-spacing: 0.08em;
@@ -190,8 +195,8 @@
 	min-width: 2rem;
 	padding: 0.25rem 0.55rem;
 	border-radius: 999px;
-	background: rgba(59, 130, 246, 0.16);
-	color: #bfdbfe;
+	background: linear-gradient(135deg, rgba(119, 217, 204, 0.18), rgba(249, 217, 118, 0.18));
+	color: #f4f7fb;
 }
 
 .search-results {
@@ -204,7 +209,7 @@
 
 .search-empty-state {
 	padding: 1rem 1.05rem;
-	border: 1px dashed rgba(148, 163, 184, 0.22);
+	border: 1px dashed rgba(255, 255, 255, 0.16);
 	border-radius: 16px;
 	background: rgba(255, 255, 255, 0.03);
 	color: var(--muted);
@@ -216,21 +221,25 @@
 	padding: 0.95rem 1rem;
 	border: 1px solid var(--line);
 	border-radius: 16px;
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
 	color: var(--text);
-	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
-	transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+	transition:
+		transform 160ms ease,
+		border-color 160ms ease,
+		box-shadow 160ms ease;
 }
 
 .search-results li:not(.search-empty-state):hover {
 	transform: translateY(-2px);
-	border-color: rgba(20, 184, 166, 0.35);
-	box-shadow: 0 14px 32px rgba(15, 23, 42, 0.18);
+	border-color: rgba(119, 217, 204, 0.34);
+	box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 640px) {
 	:host {
 		padding: 0.75rem;
+		width: 100%;
 	}
 
 	:host::before,

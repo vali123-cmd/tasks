@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background:
+		radial-gradient(circle at top left, rgba(119, 217, 204, 0.16), transparent 28%),
+		radial-gradient(circle at top right, rgba(249, 217, 118, 0.14), transparent 24%),
+		linear-gradient(180deg, #07111f 0%, #0c1728 100%);
+	color: #f4f7fb;
+	overflow-x: hidden;
+}
+
+app-root {
+	display: block;
+	min-height: 100vh;
+}

@@ -4,6 +4,8 @@ import {FormsModule} from '@angular/forms';
 import { Tasks } from '../services/tasks';
 import { StatusNames } from '../services/status-names';
 import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
+import { UserDTO } from '../interfaces/userDTO';
+import { Users } from '../services/users';
 @Component({
   selector: 'app-new-task',
   imports: [FormsModule],
@@ -15,14 +17,17 @@ export class NewTask implements OnInit {
 
   private taskService = inject(Tasks);
   private statusService = inject(StatusNames);
+  private userService = inject(Users);
 
   protected readonly statusNames = signal<StatusTypeDTO[]>([]);
+  protected users: UserDTO[] = [];
 
   
   newTask: TaskPostDTO = {
     content: '',
     dueDate: '',
-    statusName: ''
+    statusName: '',
+    AssignedTo: null
   };
 
   ngOnInit() {
@@ -43,7 +48,7 @@ export class NewTask implements OnInit {
       next: (response) => {
         console.log('Task creat ', response);
         //Resetez
-        this.newTask = { content: '', dueDate: '', statusName: '' };
+        this.newTask = { content: '', dueDate: '', statusName: '', AssignedTo: null };
       },
       error: (err) => {
         console.error('eroare', err);

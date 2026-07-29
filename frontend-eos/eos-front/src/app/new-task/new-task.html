@@ -47,6 +47,16 @@
                     }
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="assignedTo">Assigned to</label>
+                <select id="assignedTo" name="AssignedTo" [(ngModel)]="newTask.AssignedTo">
+                    <option [ngValue]="null">Select user</option>
+                    @for (user of users; track user.userId) {
+                        <option [ngValue]="user.userId">{{ user.username }}</option>
+                    }
+                </select>
+            </div>
         </div>
 
         <button type="submit" class="submit-button">Create task</button>

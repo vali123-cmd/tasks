@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,7 @@ public class TaskController {
 
 
     @GetMapping
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'READ')")
     public List<TaskDTO> getTasks(){
         return taskService.getTasks();
     }
@@ -73,18 +75,22 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteTask(@PathVariable("id") @NotNull(message="id nu poate fi null") String id)
     {
         taskService.deleteTask(id);
     }
 
     @DeleteMapping
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteAllTasks()
     {
         taskService.deleteAllTasks();
     }
 
+
     @DeleteMapping("/random")
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteRandomTask()
     {
         taskService.removeRandomTask();

@@ -27,6 +27,7 @@ public class TaskDTO {
     @NotNull
     private String statusName;
 
+
     private Long AssignedTo;
 
 

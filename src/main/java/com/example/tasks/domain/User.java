@@ -4,6 +4,7 @@ package com.example.tasks.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.type.NumericBooleanConverter;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
 
@@ -55,6 +56,8 @@ public class User {
     @Column(name = "CREATED_BY_FULLNAME")
     private String createdByFullname;
 
-
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
 }

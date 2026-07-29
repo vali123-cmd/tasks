@@ -6,6 +6,7 @@ import com.example.tasks.dto.UserDTO;
 import com.example.tasks.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,19 +16,22 @@ import java.util.List;
 @RequestMapping("/users")
 @Validated
 
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
     private final UserService userService;
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
+
     @GetMapping
+    @PreAuthorize("@permissionChecker.hasPermission('USER', 'READ')")
     public List<UserDTO> getAllUsers(){
         return userService.getAllUsers();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("@permissionChecker.hasPermission('USER', 'READ')")
     public UserDTO getUserById(@PathVariable @NotNull(message = "id nu poate fi null") Long id){
         return userService.getUserById(id);
     }
@@ -38,6 +42,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@permissionChecker.hasPermission('USER', 'DELETE')")
     public void deleteUserById(@PathVariable @NotNull(message = "id nu poate fi null") Long id ){
         userService.deleteUserById(id);
     }

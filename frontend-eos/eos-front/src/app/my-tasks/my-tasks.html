@@ -28,7 +28,7 @@
       </select>
     </div>
 
-    
+    @if (isAdmin){
     <div class="form-group">
       <label for="assignedTo">Asignat lui:</label>
       <input 
@@ -37,7 +37,7 @@
         formControlName="assignedTo" 
         placeholder="Username (ex: alex.pop)">
     </div>
-
+    }
     
     <div class="form-group">
       <label for="startDate">De la data:</label>
@@ -80,11 +80,19 @@
       <li class="task-card">
         <div class="task-card-head">
           <h3 class="task-title"><strong>Subject: </strong>{{ task.content }}</h3>
-          <button type="button" class="ghost-action" (click)="openEditModal(task)">Edit</button>
+          <div class="task-actions">
+            <button type="button" class="ghost-action" (click)="openEditModal(task)">Edit</button>
+            @if (isAdmin) {
+              <button type="button" class="danger-action" (click)="deleteTask(task)">Delete</button>
+            }
+          </div>
         </div>
         
         <div class="task-details">
           <p class="task-date"><strong>Due date:</strong> {{ task.dueDate }}</p>
+          @if (isAdmin){
+          <p class="task-assigned"><strong>Assigned to:</strong> {{ users().find(u => u.userId === task.AssignedTo)?.username ?? 'Unassigned' }}</p>
+          }
           <span class="task-status">{{ task.statusName }}</span>
         </div>
       </li>
@@ -152,6 +160,17 @@
               }
             </select>
           </div>
+          @if (isAdmin) {
+          <div class="form-group">
+            <label for="new-assignedTo">Assigned to</label>
+            <select id="new-assignedTo" name="AssignedTo" [(ngModel)]="newTaskForm.AssignedTo">
+              <option [ngValue]="null">Select user</option>
+              @for (user of users(); track user.userId) {
+                <option [ngValue]="user.userId">{{ user.username }}</option>
+              }
+            </select>
+          </div>
+          }
         </div>
 
         <button type="submit" class="submit-button">Create task</button>
@@ -209,8 +228,20 @@
               }
             </select>
           </div>
-        </div>
 
+          @if (isAdmin) {
+            <div class="form-group">
+              <label for="edit-assignedTo">Assigned to</label>
+              <select id="edit-assignedTo" name="AssignedTo" [(ngModel)]="editTaskForm.AssignedTo">
+                <option [ngValue]="null">Select user</option>
+                @for (user of users(); track user.userId) {
+                  <option [ngValue]="user.userId">{{ user.username }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
+          
         <button type="submit" class="submit-button">Save changes</button>
       </form>
     </section>

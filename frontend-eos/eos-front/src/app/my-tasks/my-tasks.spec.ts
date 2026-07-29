@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of } from 'rxjs';
 
 import { MyTasks } from './my-tasks';
+import { Tasks } from '../services/tasks';
+import { StatusNames } from '../services/status-names';
+import { Users } from '../services/users';
 
 describe('MyTasks', () => {
   let component: MyTasks;
@@ -8,7 +13,7 @@ describe('MyTasks', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyTasks],
+      imports: [MyTasks]
     }).compileComponents();
 
     fixture = TestBed.createComponent(MyTasks);

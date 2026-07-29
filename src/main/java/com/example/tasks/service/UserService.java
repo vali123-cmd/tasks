@@ -1,13 +1,14 @@
 package com.example.tasks.service;
 
+import com.example.tasks.domain.Role;
 import com.example.tasks.domain.User;
 import com.example.tasks.dto.CredentialsDTO;
 import com.example.tasks.dto.UserDTO;
 
 import com.example.tasks.dto.UserResponseDTO;
 import com.example.tasks.mapper.UserMapper;
+import com.example.tasks.repository.RoleRepository;
 import com.example.tasks.repository.UserRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RoleRepository roleRepository;
 
     public List<UserDTO> getAllUsers(){
         log.info("Users retrieved");
@@ -30,7 +32,12 @@ public class UserService {
     }
     @Transactional
     public UserDTO createUser(UserDTO userDTO){
-        return userMapper.toDto(userRepository.save(userMapper.toEntity(userDTO)));
+        String rolename = userDTO.getRoleName();
+        if(rolename == null){
+            rolename = "USER";
+        }
+        Role role = roleRepository.findByRolename(rolename).orElseThrow(() -> new RuntimeException("Role not found"));
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(userDTO, role)));
     }
 
     public UserDTO getUserById(Long id){
@@ -46,6 +53,11 @@ public class UserService {
     @Transactional
     public UserDTO updateUser(Long id, UserDTO userDTO){
         User targetUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        String rolename = userDTO.getRoleName();
+        if (rolename != null) {
+            Role role = roleRepository.findByRolename(rolename).orElseThrow(() -> new RuntimeException("Role not found"));
+            targetUser.setRole(role);
+        }
 
         targetUser.setBirthDate(userDTO.getBirthDate());
         targetUser.setUsername(userDTO.getUsername());
@@ -78,10 +90,9 @@ public class UserService {
 
     }
 
-
-
-
-
+    public User getUserByEmail(String email){
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    }
 
 
 }

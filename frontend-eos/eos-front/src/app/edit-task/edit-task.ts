@@ -5,6 +5,8 @@ import {TaskPostDTO} from '../interfaces/taskPostDTO';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StatusNames } from '../services/status-names';
 import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
+import { UserDTO } from '../interfaces/userDTO';
+import { Users } from '../services/users';
 
 
 
@@ -21,15 +23,22 @@ export class EditTask {
   task: TaskPostDTO = {
     content: '',
     dueDate: '',
-    statusName: ''
+    statusName: '',
+    AssignedTo: null
+
   };
   taskId: number = 0;
+  protected users: UserDTO[] = [];
+  private userService = inject(Users);
+
+  
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   ngOnInit() {
     this.statusService.getStatusNames().subscribe((statusNames) => {
       this.statusNames = statusNames;
     });
+    
 
     this.taskId = Number(this.route.snapshot.paramMap.get('id'));
     if (this.taskId) {
@@ -39,7 +48,8 @@ export class EditTask {
           this.task = {
             content: response.content,
             dueDate: response.dueDate.split('T')[0],
-            statusName: response.statusName
+            statusName: response.statusName,
+            AssignedTo: response.AssignedTo
           };
         },
         error: (err) => {

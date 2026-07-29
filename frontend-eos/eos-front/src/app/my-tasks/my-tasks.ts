@@ -5,7 +5,10 @@ import { Task } from '../interfaces/task';
 import { StatusNames } from '../services/status-names';
 import { TaskPostDTO } from '../interfaces/taskPostDTO';
 import { StatusTypeDTO } from '../interfaces/statusTypeDTO';
+import { UserDTO } from '../interfaces/userDTO';
+import { Users } from '../services/users';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import { Auth } from '../services/auth';
 
 @Component({
   selector: 'app-my-tasks',
@@ -18,9 +21,15 @@ import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 export class MyTasks implements OnInit {
   private taskService = inject(Tasks);
   private statusService = inject(StatusNames);
+  private userService = inject(Users);
   private fb = inject(FormBuilder);
+  private authService = inject(Auth);
   
   sortedTasks = signal<Task[]>([]);
+  users = signal<any[]>([]);
+  
+
+  isAdmin = this.authService.isAdmin();
   
 
 
@@ -35,10 +44,12 @@ export class MyTasks implements OnInit {
 
   ngOnInit() {
     this.initSearchForm();
+    this.loadUsersIfAdmin();
     this.refreshTasks();
     this.statusService.getStatusNames().subscribe((statusNames) => {
       this.statusNames.set(statusNames);
     });
+    
   }
   initSearchForm() {
     this.searchForm = this.fb.group({
@@ -67,20 +78,33 @@ export class MyTasks implements OnInit {
     });
   }
 
-
+  loadUsersIfAdmin() {
+  if (this.isAdmin && this.users().length === 0) {
+    this.userService.getUsers().subscribe({
+      next: (users) => {
+        this.users.set( users as any[]);
+      },
+      error: (err) => console.error('Error getting users:', err)
+    });
+  }
+  }
 
 
   openNewModal() {
+    this.loadUsersIfAdmin();
     this.newTaskForm = this.createEmptyTaskForm();
     this.activeModal.set('new');
+    
   }
 
   openEditModal(task: Task) {
+    this.loadUsersIfAdmin();
     this.selectedTask = task;
     this.editTaskForm = {
       content: task.content,
       dueDate: task.dueDate.split('T')[0],
       statusName: task.statusName,
+      AssignedTo: task.AssignedTo
     };
     this.activeModal.set('edit');
   }
@@ -134,9 +158,33 @@ export class MyTasks implements OnInit {
     });
   }
 
+  deleteTask(task: Task) {
+    const confirmed = window.confirm(`Delete task "${task.content}"?`);
+    if (!confirmed) {
+      return;
+    }
+
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => {
+        this.sortedTasks.update((tasks) => tasks.filter((currentTask) => currentTask.id !== task.id));
+      },
+      error: (err) => {
+        console.error('eroare la stergere task', err);
+      },
+    });
+  }
+
   private refreshTasks() {
     this.taskService.getTasks().subscribe((tasks: Task[]) => {
-      this.sortedTasks.set(tasks.sort((a: Task, b: Task) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
+      const sorted = tasks.sort((a: Task, b: Task) => 
+      new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
+    );
+    const formattedTasks = sorted.map(task => ({
+      ...task,
+      dueDate: task.dueDate.split('T')[0] 
+    }));
+    this.sortedTasks.set(formattedTasks);
+
     });
   }
 
@@ -145,6 +193,7 @@ export class MyTasks implements OnInit {
       content: '',
       dueDate: '',
       statusName: '',
+      AssignedTo: null 
     };
 
   }
