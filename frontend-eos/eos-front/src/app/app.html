@@ -5,7 +5,9 @@
     <ul class="nav-list">
       <li><a class="nav-link" routerLink="/new-task" routerLinkActive="active">New Task</a></li>
       <li><a class="nav-link" routerLink="/my-tasks" routerLinkActive="active">My Tasks</a></li>
-
+      @if (isAdmin()) {
+        <li><a class="nav-link" routerLink="/admin" routerLinkActive="active">Admin</a></li>
+      }
       @if (isLoggedIn()) {
         <li class="auth-area">
           <div class="user-info">

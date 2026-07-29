@@ -1,6 +1,7 @@
 package com.example.tasks.mapper;
 
 
+import com.example.tasks.domain.Role;
 import com.example.tasks.domain.User;
 import com.example.tasks.dto.UserDTO;
 import org.springframework.stereotype.Component;
@@ -19,11 +20,12 @@ public class UserMapper {
                 .isInternal(user.isInternal())
                 .creationDate(user.getCreationDate())
                 .email(user.getEmail())
+                .roleName(user.getRole().getRolename())
                 .password(user.getPassword())
                 .build();
     }
 
-    public User toEntity(UserDTO userDTO) {
+    public User toEntity(UserDTO userDTO, Role role) {
         LocalDateTime date = userDTO.getCreationDate();
         if (userDTO.getCreationDate() == null) {
             date = LocalDateTime.now();
@@ -39,6 +41,7 @@ public class UserMapper {
                 createdBy(createdBy).
                 lastUpdateDate(LocalDateTime.now()).
                 lastUpdateBy(createdBy).
+                role(role).
                 creationDate(date).
                 isInternal(false).
                 email(userDTO.getEmail()).

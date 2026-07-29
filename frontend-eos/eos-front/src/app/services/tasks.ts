@@ -24,6 +24,10 @@ export class Tasks {
     return this.http.put(`${this.apiUrl}/${id}`, Task);
   } 
 
+  public deleteTask(id: number) {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
   public searchTasks(filters: any) {
     let params = new HttpParams();
 

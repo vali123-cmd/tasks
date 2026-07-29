@@ -1,0 +1,53 @@
+
+<div class="admin-panel">
+	<div class="header">
+	<h1>Admin Panel</h1>
+	<p>Manage users and their roles.</p>
+	</div>
+
+	<div *ngIf="loading()" class="state">Loading users...</div>
+	<div *ngIf="error() as message" class="state error">{{ message }}</div>
+
+	<section class="users">
+		<h2>Users</h2>
+		<div *ngIf="!loading() && users().length === 0" class="empty">No users found</div>
+		<table *ngIf="!loading() && users().length > 0">
+			<thead>
+				<tr>
+					<th>Username</th>
+					<th>User</th>
+					<th>Email</th>
+					<th>Created by</th>
+					<th>Created at</th>
+					<th>Internal</th>
+					<th>Role</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let user of users()">
+					<td class="name">{{ user.username }}</td>
+					<td class="id">#{{ user.userId }}</td>
+					<td class="email">{{ user.email || '-' }}</td>
+					<td>{{ user.createdBy || '-' }}</td>
+					<td>{{ user.creationDate | date:'medium' }}</td>
+					<td>{{ user.internal ? 'Yes' : 'No' }}</td>
+					<td class="current">
+						<select [(ngModel)]="user.roleName">
+							<option *ngFor="let role of roles()" [value]="role.rolename">{{ role.rolename }}</option>
+						</select>
+					</td>
+					<td>
+						<div class="actions">
+							<button type="button" (click)="saveUser(user)" [disabled]="savingUserId() === user.userId">{{ savingUserId() === user.userId ? 'Saving...' : 'Save' }}</button>
+							<button type="button" class="danger" (click)="deleteUser(user.userId)">Delete</button>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+</div>
+
+
+	

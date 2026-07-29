@@ -29,11 +29,8 @@ public class UserDTO {
 
 
 
+    private String roleName;
     private boolean isInternal;
     private String createdBy;
     private LocalDateTime creationDate;
-
-
-
-
 }

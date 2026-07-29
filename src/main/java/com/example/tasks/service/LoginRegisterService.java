@@ -92,15 +92,13 @@ public class LoginRegisterService {
         userDTO.setPassword(hashPassword);
 
         UserMapper userMapper = new UserMapper();
-        userRepository.save(userMapper.toEntity(userDTO));
+
+        userRepository.save(userMapper.toEntity(userDTO, defaultRole));
 
         log.info("User created: {}", userDTO);
 
 
         return ResponseEntity.ok(createJWTToken(userDTO.getEmail()));
     }
-
-
-
 
 }

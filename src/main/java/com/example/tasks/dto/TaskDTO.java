@@ -30,7 +30,7 @@ public class TaskDTO {
 
     private Long AssignedTo;
 
-    @NotNull
+
     private String createdBy;
 
     private LocalDateTime creationDate;

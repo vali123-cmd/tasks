@@ -153,6 +153,8 @@
     transform: translateY(0);
 }
 
+
+
 router-outlet {
     display: block;
 }

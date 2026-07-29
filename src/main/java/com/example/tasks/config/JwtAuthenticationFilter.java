@@ -42,6 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
+        System.out.println("--- REQUEST CĂTRE: " + request.getRequestURI() + " ---");
+        System.out.println("HEADER PRIMIT: " + authHeader);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
@@ -55,6 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var claims = jwtConsumer.processToClaims(token);
 
                 String email = claims.getSubject();
+                System.out.println("TOKEN VALIDAT CU SUCCES! Email extras: " + email);
 
 
                 Long roleId = claims.getClaimValue("roleId", Long.class);
@@ -75,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
                 }
-
+                System.out.println("PERMISIUNI (AUTHORITIES) PUSE ÎN CONTEXT: " + authorities);
 
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken(
@@ -85,10 +88,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         )
                 );
             } catch (Exception e) {
+                System.out.println("!!! EROARE LA VALIDAREA TOKEN-ULUI !!!");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Invalid or expired token");
                 return;
             }
+        } else {
+            System.out.println("Header-ul nu are prefixul 'Bearer '");
         }
 
         filterChain.doFilter(request, response);

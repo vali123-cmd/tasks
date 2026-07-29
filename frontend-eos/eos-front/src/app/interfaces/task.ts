@@ -3,7 +3,7 @@ export interface Task {
         content: string,
         dueDate: string,
         statusName: string,
-        AssignedTo: number,
+        AssignedTo: number | null,
         createdBy: string,
         creationDate: string
 }

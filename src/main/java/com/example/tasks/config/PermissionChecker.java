@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 public class PermissionChecker {
 
-    private User user;
 
 
     public boolean hasPermission(String resource, String action) {

@@ -75,18 +75,22 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteTask(@PathVariable("id") @NotNull(message="id nu poate fi null") String id)
     {
         taskService.deleteTask(id);
     }
 
     @DeleteMapping
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteAllTasks()
     {
         taskService.deleteAllTasks();
     }
 
+
     @DeleteMapping("/random")
+    @PreAuthorize("@permissionChecker.hasPermission('TASK', 'DELETE')")
     public void deleteRandomTask()
     {
         taskService.removeRandomTask();
