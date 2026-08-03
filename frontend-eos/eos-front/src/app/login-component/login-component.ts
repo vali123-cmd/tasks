@@ -75,6 +75,7 @@ export class LoginComponent {
         this.router.navigate(['/my-tasks']);
       },
       error: (err) => {
+        this.errorLogin = true;
         console.error('Error during login', err);
       }
       });

@@ -294,4 +294,20 @@ public class TaskService {
 
         return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
     }
+    public Boolean checkForApproachingDeadline(TaskDTO task, Long deadline)
+    {
+
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime dueDate = task.getDueDate();
+        Long daysUntilDeadline = currentDateTime.until(dueDate, java.time.temporal.ChronoUnit.DAYS);
+
+        if (daysUntilDeadline <= deadline && daysUntilDeadline >= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
