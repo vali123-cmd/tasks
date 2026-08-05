@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.tasks.domain.Task;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -41,12 +43,16 @@ public interface TaskRepository extends JpaRepository<Task, String> {
             "AND (:username IS NULL OR u.username = :username) " +
             "AND (:startDate IS NULL OR t.dueDate >= :startDate) " +
             "AND (:endDate IS NULL OR t.dueDate <= :endDate)")
-    List<Task> searchTasks(
+    Page<Task> searchTasks(
             @Param("name") String name,
             @Param("statusName") String statusName,
             @Param("username") String username,
             @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
+            @Param("endDate") LocalDateTime endDate,
+            Pageable pageable
     );
+
+    Page<Task> findByUser(User user, Pageable pageable);
+
 
 }

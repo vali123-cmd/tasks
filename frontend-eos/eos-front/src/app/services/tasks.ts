@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { TaskPostDTO} from '../interfaces/taskPostDTO';
 import { Task } from '../interfaces/task';
+import { PageResponse } from '../interfaces/pageResponse';
 @Injectable({
   providedIn: 'root',
 })
@@ -9,7 +10,7 @@ export class Tasks {
   private http = inject(HttpClient)  
   apiUrl = 'http://localhost:8080/tasks';
   public getTasks() {
-    return this.http.get<any[]>(this.apiUrl);
+    return this.http.get<PageResponse<Task>>(this.apiUrl);
   }
 
   public createTask(Task: TaskPostDTO) {
@@ -37,9 +38,13 @@ export class Tasks {
     if (filters.assignedTo) params = params.append('assignedTo', filters.assignedTo);
     if (filters.startDate) params = params.append('startDate', filters.startDate);
     if (filters.endDate) params = params.append('endDate', filters.endDate);
+    if (filters.page !== undefined) params = params.append('page', filters.page);
+    if (filters.size !== undefined) params = params.append('size', filters.size);
+    if (filters.sortBy) params = params.append('sortBy', filters.sortBy);
+    if (filters.sortDir) params = params.append('sortDir', filters.sortDir);
 
-    return this.http.get<Task[]>(`${this.apiUrl}/search`, { params });
-  
+    return this.http.get<PageResponse<Task>>(`${this.apiUrl}/search`, { params });
+    
   }
 
 }

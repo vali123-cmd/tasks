@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +29,11 @@ public class TaskController {
 
     @GetMapping
     @PreAuthorize("@permissionChecker.hasPermission('TASK', 'READ')")
-    public List<TaskDTO> getTasks(){
-        return taskService.getTasks();
+    public Page<TaskDTO> getTasks(@RequestParam(defaultValue = "0") int page,
+                                  @RequestParam(defaultValue = "10") int size,
+                                  @RequestParam(defaultValue = "dueDate") String sortBy,
+                                  @RequestParam(defaultValue = "asc") String sortDir){
+        return taskService.getTasks(page, size, sortBy, sortDir);
     }
 
     @GetMapping("/{id}")
@@ -153,13 +157,17 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public List<TaskDTO> search(@RequestParam(required = false) String name,
+    public Page<TaskDTO> search(@RequestParam(required = false) String name,
                                 @RequestParam(required = false) String status,
                                 @RequestParam(required = false) String assignedTo,
                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate)
+                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size,
+                                @RequestParam(defaultValue = "dueDate") String sortBy,
+                                @RequestParam(defaultValue = "asc") String sortDir)
     {
-        return taskService.searchTasks(name, status, assignedTo, startDate, endDate);
+        return taskService.searchTasks(name, status, assignedTo, startDate, endDate, page, size, sortBy, sortDir);
     }
 
 

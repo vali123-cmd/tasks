@@ -11,6 +11,10 @@ import com.example.tasks.repository.TaskRepository;
 import com.example.tasks.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -50,11 +54,15 @@ public class TaskService {
         return permissionChecker.hasPermission("TASKS", "READ_ALL");
     }
 
-    public List<TaskDTO> getTasks() {
+    public Page<TaskDTO> getTasks(int page, int size, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
         if (isAdmin()) {
-            return taskRepository.findAll().stream().map(taskMapper::toDTO).toList();
+            return taskRepository.findAll(pageable).map(taskMapper::toDTO);
         } else {
-            return taskRepository.findByUser(getCurrentUser()).stream().map(taskMapper::toDTO).toList();
+            User currentUser = getCurrentUser();
+            return taskRepository.findByUser(currentUser, pageable).map(taskMapper::toDTO);
         }
     }
 
@@ -82,7 +90,7 @@ public class TaskService {
             task.setAssignedTo(userId);
             taskRepository.save(taskMapper.toEntity(task, status, user));
         }
-        return getTasks();
+        return getTasks(0, 10, "dueDate", "asc").getContent();
     }
 
     @Transactional
@@ -132,7 +140,7 @@ public class TaskService {
             throw new RuntimeException("Permission denied");
         }
         taskRepository.deleteById(id);
-        return getTasks();
+        return getTasks(0, 10, "dueDate", "asc").getContent();
     }
 
     @Transactional
@@ -140,7 +148,7 @@ public class TaskService {
         for (TaskDTO t : tasks) {
             addTask(t);
         }
-        return getTasks();
+        return getTasks(0, 10, "dueDate", "asc").getContent();
     }
 
     @Transactional
@@ -166,7 +174,7 @@ public class TaskService {
         return null;
     }
 
-    public List<TaskDTO> getTasksLowerThanDate(LocalDateTime date) {
+   public List<TaskDTO> getTasksLowerThanDate(LocalDateTime date) {
         if (isAdmin()) {
             return taskRepository.findByDueDateBefore(date).stream().map(taskMapper::toDTO).toList();
         } else {
@@ -175,6 +183,8 @@ public class TaskService {
                     .map(taskMapper::toDTO).toList();
         }
     }
+
+
 
     public List<TaskDTO> getTasksHigherThanDate(LocalDateTime date) {
         if (isAdmin()) {
@@ -195,6 +205,7 @@ public class TaskService {
                     .map(taskMapper::toDTO).toList();
         }
     }
+
 
     @Transactional
     public TaskDTO updateTaskContent(String id, String content) {
@@ -220,7 +231,7 @@ public class TaskService {
         }
         int randomIndex = (int) (Math.random() * tasks.size());
         taskRepository.delete(tasks.get(randomIndex));
-        return getTasks();
+        return getTasks(0, 10, "dueDate", "asc").getContent();
     }
 
     public List<TaskDTO> tasksNamesThatEndWith(String ending) {
@@ -274,25 +285,28 @@ public class TaskService {
         }
     }
 
-    public List<TaskDTO> searchTasks(String name, String statusName, String username, LocalDate startDate, LocalDate endDate) {
+    public Page<TaskDTO> searchTasks(String name, String statusName, String username, LocalDate startDate, LocalDate endDate, int page, int size, String sortBy, String sortDir) {
         LocalDateTime startDateTime = (startDate != null) ? startDate.atStartOfDay() : null;
         LocalDateTime endDateTime = (endDate != null) ? endDate.atTime(23, 59, 59) : null;
+        Sort sort = sortDir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        if (!isAdmin() && username != null && !username.equals(getCurrentUser().getUsername())) {
-            throw new RuntimeException("Permission denied");
-        }
-
-        List<Task> tasks = taskRepository.searchTasks(name, statusName, username, startDateTime, endDateTime);
 
         if (!isAdmin()) {
-            Long currentUserId = getCurrentUser().getUserId();
-            return tasks.stream()
-                    .filter(task -> task.getUser() != null && task.getUser().getUserId().equals(currentUserId))
-                    .map(taskMapper::toDTO)
-                    .collect(Collectors.toList());
+            String currentUsername = getCurrentUser().getUsername();
+
+
+            if (username != null && !username.trim().isEmpty() && !username.equals(currentUsername)) {
+                throw new RuntimeException("Permission denied");
+            }
+
+            username = currentUsername;
         }
 
-        return tasks.stream().map(taskMapper::toDTO).collect(Collectors.toList());
+
+        Page<Task> tasks = taskRepository.searchTasks(name, statusName, username, startDateTime, endDateTime, pageable);
+
+        return tasks.map(taskMapper::toDTO);
     }
     public Boolean checkForApproachingDeadline(TaskDTO task, Long deadline)
     {

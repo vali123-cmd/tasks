@@ -32,6 +32,12 @@ export class MyTasks implements OnInit {
   isAdmin = this.authService.isAdmin();
   
 
+  currentPage = signal<number>(0);
+  pageSize = signal<number>(10);
+  totalPages = signal<number>(0);
+  isFirstPage = signal<boolean>(true);
+  isLastPage = signal<boolean>(false);
+
 
   statusNames = signal<StatusTypeDTO[]>([]);
   activeModal = signal<'new' | 'edit' | null>(null);
@@ -65,26 +71,57 @@ export class MyTasks implements OnInit {
       status: [''],
       assignedTo: [''],
       startDate: [''],
-      endDate: ['']
+      endDate: [''],
+      sortBy: ['dueDate'],
+      sortDir: ['desc']
     });
 
     this.searchForm.valueChanges.pipe(
       debounceTime(500),
       distinctUntilChanged()
     ).subscribe(filters => {
+      this.currentPage.set(0);
       this.applyFilters(filters);
     });
   }
 
-  applyFilters(filters: any) {
-    console.log('Filtrele trimise sunt:', filters);
-    this.taskService.searchTasks(filters).subscribe({
-      next: (tasks: Task[]) => {
-        this.sortedTasks.set(tasks.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()));
-      },
-      error: (err) => console.error('Eroare la filtrare', err)
-    });
+  nextPage() {
+    if (!this.isLastPage()) {
+      this.currentPage.update(p => p + 1);
+      this.refreshTasks(); 
+    }
   }
+  previousPage() {
+    if (!this.isFirstPage()) {
+      this.currentPage.update(p => p - 1);
+      this.refreshTasks(); 
+    }
+  }
+  applyFilters(filters: any) {
+  const payload = {
+    ...filters,
+    page: this.currentPage(),
+    size: this.pageSize()
+  };
+
+  this.taskService.searchTasks(payload).subscribe({
+    next: (response: any) => {
+      
+      const formattedTasks = response.content.map((task: Task) => ({
+        ...task,
+        dueDate: task.dueDate.split('T')[0] 
+      }));
+      
+      this.sortedTasks.set(formattedTasks);
+      this.totalPages.set(response.totalPages);
+      this.isFirstPage.set(response.first);
+      this.isLastPage.set(response.last);
+    },
+    error: (err) => {
+      console.error('Error searching tasks:', err);
+    }
+  });
+}
 
   loadUsersIfAdmin() {
   if (this.isAdmin && this.users().length === 0) {
@@ -174,7 +211,8 @@ export class MyTasks implements OnInit {
 
     this.taskService.deleteTask(task.id).subscribe({
       next: () => {
-        this.sortedTasks.update((tasks) => tasks.filter((currentTask) => currentTask.id !== task.id));
+        
+        this.refreshTasks();
       },
       error: (err) => {
         console.error('eroare la stergere task', err);
@@ -183,17 +221,7 @@ export class MyTasks implements OnInit {
   }
 
   private refreshTasks() {
-    this.taskService.getTasks().subscribe((tasks: Task[]) => {
-      const sorted = tasks.sort((a: Task, b: Task) => 
-      new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-    );
-    const formattedTasks = sorted.map(task => ({
-      ...task,
-      dueDate: task.dueDate.split('T')[0] 
-    }));
-    this.sortedTasks.set(formattedTasks);
-
-    });
+    this.applyFilters(this.searchForm.value);
   }
 
   private createEmptyTaskForm(): TaskPostDTO {
